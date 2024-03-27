@@ -1,83 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:theme="@style/Theme.Material3.Light.NoActionBar">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/text_view_required_hour"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:theme="@style/Theme.Material3.Light.NoActionBar">
+        android:layout_marginTop="5dp"
+        android:textColor="@color/main_dark_grey"
+        android:textSize="27sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="2" />
 
-        <TextView
-            android:id="@+id/text_view_required_hour"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:textSize="27sp"
-            android:textColor="@color/main_dark_grey"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="2" />
+    <TextView
+        android:id="@+id/text_view_required_hour_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="3dp"
+        android:layout_marginBottom="3dp"
+        android:text="@string/required_hour"
+        android:textColor="@color/main_dark_grey"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@id/text_view_required_hour"
+        app:layout_constraintStart_toEndOf="@id/text_view_required_hour"
+        app:layout_goneMarginStart="0dp" />
 
-        <TextView
-            android:id="@+id/text_view_required_hour_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="3dp"
-            app:layout_goneMarginStart="0dp"
-            android:layout_marginBottom="3dp"
-            android:text="@string/required_hour"
-            android:textSize="20sp"
-            android:textColor="@color/main_dark_grey"
-            app:layout_constraintBottom_toBottomOf="@id/text_view_required_hour"
-            app:layout_constraintStart_toEndOf="@id/text_view_required_hour" />
+    <TextView
+        android:id="@+id/text_view_required_minute"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:textColor="@color/main_dark_grey"
+        android:textSize="27sp"
+        app:layout_constraintStart_toEndOf="@id/text_view_required_hour_text"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="31" />
 
-        <TextView
-            android:id="@+id/text_view_required_minute"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:textSize="27sp"
-            android:textColor="@color/main_dark_grey"
-            app:layout_constraintStart_toEndOf="@id/text_view_required_hour_text"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="31" />
+    <TextView
+        android:id="@+id/text_view_required_minute_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="3dp"
+        android:layout_marginBottom="3dp"
+        android:text="@string/required_minute"
+        android:textColor="@color/main_dark_grey"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@id/text_view_required_minute"
+        app:layout_constraintStart_toEndOf="@id/text_view_required_minute" />
 
-        <TextView
-            android:id="@+id/text_view_required_minute_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="3dp"
-            android:layout_marginBottom="3dp"
-            android:text="@string/required_minute"
-            android:textSize="20sp"
-            android:textColor="@color/main_dark_grey"
-            app:layout_constraintBottom_toBottomOf="@id/text_view_required_minute"
-            app:layout_constraintStart_toEndOf="@id/text_view_required_minute" />
+    <com.stop.ui.route.TimeLineContainer
+        android:id="@+id/time_line_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_view_required_minute" />
 
-        <com.stop.ui.route.TimeLineContainer
-            android:id="@+id/time_line_container"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/text_view_required_minute" />
+    <com.stop.ui.route.StationContainer
+        android:id="@+id/station_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/time_line_container" />
 
-        <com.stop.ui.route.StationContainer
-            android:id="@+id/station_container"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/time_line_container" />
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        app:dividerColor="@color/main_lighter_grey"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/station_container" />
 
-        <com.google.android.material.divider.MaterialDivider
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            app:dividerColor="@color/main_lighter_grey"
-            app:layout_constraintTop_toBottomOf="@id/station_container"
-            app:layout_constraintBottom_toBottomOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</layout>
+</androidx.constraintlayout.widget.ConstraintLayout>

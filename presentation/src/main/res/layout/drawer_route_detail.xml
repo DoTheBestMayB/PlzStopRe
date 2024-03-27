@@ -1,142 +1,121 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
-    <data>
-        <import type="android.view.View"/>
-        <import type="com.stop.ui.util.DrawerStringUtils" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="30dp" />
 
-        <variable
-            name="routeResultViewModel"
-            type="com.stop.ui.route.RouteResultViewModel" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="30dp" />
 
-        <variable
-            name="itinerary"
-            type="com.stop.domain.model.route.tmap.custom.Itinerary" />
-    </data>
+    <TextView
+        android:id="@+id/text_view_time"
+        android:layout_width="200dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center_vertical"
+        android:textColor="@color/main_dark_grey"
+        android:textSize="27sp"
+        app:layout_constraintStart_toStartOf="@id/guideline_start"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="1시간 17분" />
+
+    <TextView
+        android:id="@+id/text_view_information"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:textColor="@color/main_light_grey"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toEndOf="@id/guideline_end"
+        app:layout_constraintStart_toStartOf="@id/guideline_start"
+        app:layout_constraintTop_toBottomOf="@id/text_view_time"
+        tools:text="34km    도보 6분    3,300원    환승 2회" />
+
+    <View
+        android:id="@+id/view_alarm"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="17dp"
+        android:background="@drawable/background_route_detail_button"
+        app:layout_constraintEnd_toEndOf="@id/guideline_end"
+        app:layout_constraintStart_toStartOf="@id/guideline_start"
+        app:layout_constraintTop_toBottomOf="@id/text_view_information" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white">
+        android:id="@+id/constraint_layout_alert_cant_do"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@id/view_alarm"
+        app:layout_constraintEnd_toEndOf="@id/view_alarm"
+        app:layout_constraintStart_toStartOf="@id/view_alarm"
+        app:layout_constraintTop_toTopOf="@id/view_alarm">
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline_start"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_begin="30dp" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline_end"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_end="30dp" />
-
-        <TextView
-            android:id="@+id/text_view_time"
-            android:layout_width="200dp"
-            android:layout_height="60dp"
-            android:layout_marginTop="10dp"
-            android:text="@{DrawerStringUtils.getTimeString(itinerary.totalTime)}"
-            android:textSize="27sp"
-            android:textColor="@color/main_dark_grey"
-            android:gravity="center_vertical"
-            app:layout_constraintStart_toStartOf="@id/guideline_start"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="1시간 17분"/>
-
-        <TextView
-            android:id="@+id/text_view_information"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@{DrawerStringUtils.getTopInformationString(itinerary)}"
-            android:textSize="13sp"
-            android:textColor="@color/main_light_grey"
-            android:gravity="center_vertical"
-            app:layout_constraintStart_toStartOf="@id/guideline_start"
-            app:layout_constraintEnd_toEndOf="@id/guideline_end"
-            app:layout_constraintTop_toBottomOf="@id/text_view_time"
-            tools:text="34km    도보 6분    3,300원    환승 2회"/>
-
-        <View
-            android:id="@+id/view_alarm"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="17dp"
-            android:background="@drawable/background_route_detail_button"
-            android:visibility="@{routeResultViewModel.isLastTimeAvailable() ? View.VISIBLE : View.INVISIBLE}"
-            app:layout_constraintStart_toStartOf="@id/guideline_start"
-            app:layout_constraintEnd_toEndOf="@id/guideline_end"
-            app:layout_constraintTop_toBottomOf="@id/text_view_information" />
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="@{routeResultViewModel.isLastTimeAvailable() ? View.VISIBLE : View.INVISIBLE}"
-            app:layout_constraintStart_toStartOf="@id/view_alarm"
-            app:layout_constraintEnd_toEndOf="@id/view_alarm"
-            app:layout_constraintTop_toTopOf="@id/view_alarm"
-            app:layout_constraintBottom_toBottomOf="@id/view_alarm">
-
-            <ImageView
-                android:id="@+id/image_view_alarm"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:srcCompat="@drawable/ic_alarm" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:text="@string/alarm_setting"
-                android:textSize="13sp"
-                android:textColor="@color/main_dark_grey"
-                android:gravity="center"
-                app:layout_constraintStart_toEndOf="@id/image_view_alarm"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <View
-            android:id="@+id/view_alarm_2"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="17dp"
-            android:background="@drawable/background_route_detail_button_light"
-            android:visibility="@{routeResultViewModel.isLastTimeAvailable() ? View.INVISIBLE : View.VISIBLE}"
-            app:layout_constraintStart_toStartOf="@id/guideline_start"
-            app:layout_constraintEnd_toEndOf="@id/guideline_end"
-            app:layout_constraintTop_toBottomOf="@id/text_view_information" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/last_time_not_found"
-            android:textSize="13sp"
-            android:textColor="@color/main_walk_grey"
-            android:visibility="@{routeResultViewModel.isLastTimeAvailable() ? View.INVISIBLE : View.VISIBLE}"
-            app:layout_constraintStart_toStartOf="@id/view_alarm_2"
-            app:layout_constraintEnd_toEndOf="@id/view_alarm_2"
-            app:layout_constraintTop_toTopOf="@id/view_alarm_2"
-            app:layout_constraintBottom_toBottomOf="@id/view_alarm_2" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view_route_detail"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginTop="20dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/view_alarm"
+        <ImageView
+            android:id="@+id/image_view_alarm"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/item_route_path" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_alarm" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:gravity="center"
+            android:text="@string/alarm_setting"
+            android:textColor="@color/main_dark_grey"
+            android:textSize="13sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/image_view_alarm"
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-</layout>
+
+    <View
+        android:id="@+id/view_alarm_2"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="17dp"
+        android:background="@drawable/background_route_detail_button_light"
+        app:layout_constraintEnd_toEndOf="@id/guideline_end"
+        app:layout_constraintStart_toStartOf="@id/guideline_start"
+        app:layout_constraintTop_toBottomOf="@id/text_view_information" />
+
+    <TextView
+        android:id="@+id/text_view_alarm_text_cant_set"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/last_time_not_found"
+        android:textColor="@color/main_walk_grey"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toBottomOf="@id/view_alarm_2"
+        app:layout_constraintEnd_toEndOf="@id/view_alarm_2"
+        app:layout_constraintStart_toStartOf="@id/view_alarm_2"
+        app:layout_constraintTop_toTopOf="@id/view_alarm_2" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_route_detail"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="20dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/view_alarm"
+        tools:listitem="@layout/item_route_path" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -31,30 +31,7 @@ class AlarmSettingFragment : Fragment() {
     ): View {
         _binding = FragmentAlarmSettingBinding.inflate(inflater, container, false)
 
-        initBinding()
-
         return binding.root
-    }
-
-    private fun initBinding() {
-        val itinerary = routeResultViewModel.itinerary.value ?: throw IllegalArgumentException()
-
-        val transportLastTimes = routeResultViewModel.lastTimes.value
-            ?: throw IllegalArgumentException()
-
-        val transportLastTime = transportLastTimes.filterNotNull().sortedBy {
-            it.timeToBoard
-        }.first()
-
-        binding.apply {
-            lifecycleOwner = viewLifecycleOwner
-            alarmViewModel = alarmSettingViewModel
-            startPosition = routeResultViewModel.origin.value?.name
-            endPosition = routeResultViewModel.destination.value?.name
-            lastTime = transportLastTime.timeToBoard
-            walkTime = (itinerary.routes.first().sectionTime.div(60)).roundToInt()
-            fragment = this@AlarmSettingFragment
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -62,9 +39,18 @@ class AlarmSettingFragment : Fragment() {
 
         initView()
         setToggleListener()
+        setListener()
     }
 
     private fun initView() {
+        binding.textViewStartPosition.text = routeResultViewModel.origin.value?.name
+        binding.textViewEndPosition.text = routeResultViewModel.destination.value?.name
+        binding.textViewLastTimeInfo.text = routeResultViewModel.lastTimes.value?.filterNotNull()?.sortedBy {
+            it.timeToBoard
+        }?.first()?.timeToBoard
+        val expectedWalkingTime = (routeResultViewModel.itinerary.value!!.routes.first().sectionTime.div(60)).roundToInt().toString() + "분"
+        binding.textViewWalkTimeInfo.text = expectedWalkingTime
+
         with(binding) {
             numberPickerAlarmTime.minValue = 0
             numberPickerAlarmTime.maxValue = 60
@@ -86,7 +72,16 @@ class AlarmSettingFragment : Fragment() {
         }
     }
 
-    fun setAlarmRegisterListener() {
+    private fun setListener() {
+        binding.numberPickerAlarmTime.setOnValueChangedListener { picker, oldVal, newVal ->
+            alarmSettingViewModel.updateTime(newVal)
+        }
+        binding.viewRegisterAlarm.setOnClickListener {
+            setAlarmRegisterListener()
+        }
+    }
+
+    private fun setAlarmRegisterListener() {
         val itinerary = routeResultViewModel.itinerary.value ?: throw IllegalArgumentException()
 
         val transportLastTimes = routeResultViewModel.lastTimes.value

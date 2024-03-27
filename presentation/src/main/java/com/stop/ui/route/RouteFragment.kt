@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
@@ -59,14 +60,7 @@ class RouteFragment : Fragment() {
     ): View {
         _binding = FragmentRouteBinding.inflate(layoutInflater)
 
-        initBinding()
-
         return binding.root
-    }
-
-    private fun initBinding() {
-        binding.lifecycleOwner = viewLifecycleOwner
-        binding.viewModel = routeViewModel
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -150,6 +144,22 @@ class RouteFragment : Fragment() {
     }
 
     private fun setObserve() {
+        routeViewModel.destination.observe(viewLifecycleOwner) {
+            binding.textViewDestination.text = if (it.name.isEmpty()) {
+                it.roadAddress
+            } else {
+                it.name
+            }
+            binding.textViewDestination.setTextColor(ContextCompat.getColor(this.requireContext(), R.color.main_dark_grey))
+        }
+        routeViewModel.origin.observe(viewLifecycleOwner) {
+            binding.textViewOrigin.text = if (it.name.isEmpty()) {
+                it.roadAddress
+            } else {
+                it.name
+            }
+            binding.textViewOrigin.setTextColor(ContextCompat.getColor(this.requireContext(), R.color.main_dark_grey))
+        }
         routeViewModel.routeResponse.observe(viewLifecycleOwner) {
             if (it == null) {
                 return@observe

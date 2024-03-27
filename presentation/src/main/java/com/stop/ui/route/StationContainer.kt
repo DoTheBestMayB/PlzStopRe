@@ -1,11 +1,14 @@
 package com.stop.ui.route
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.content.ContextCompat
+import androidx.core.widget.ImageViewCompat
 import com.stop.databinding.ItemStationContainerBinding
 import com.stop.model.route.RouteItem
 
@@ -41,8 +44,20 @@ class StationContainer(
         routeItem: RouteItem,
         index: Int
     ) {
-        binding.routeItem = routeItem
-        binding.executePendingBindings()
+        binding.textViewTypeName.text = routeItem.typeName
+        binding.textViewName.text = routeItem.name
+        binding.viewBeforeLine.setBackgroundColor(routeItem.beforeColor)
+        binding.viewCurrentLine.setBackgroundColor(routeItem.currentColor)
+        ImageViewCompat.setImageTintList(binding.imageViewCurrentLine, ColorStateList.valueOf(routeItem.currentColor))
+        binding.imageViewMode.setImageResource(routeItem.mode)
+
+        if (routeItem.typeName == "하차") {
+            binding.viewLine.visibility = View.GONE
+            binding.viewCurrentLine.visibility = View.GONE
+        } else {
+            binding.viewLine.visibility = View.VISIBLE
+            binding.viewCurrentLine.visibility = View.VISIBLE
+        }
 
         if (index == 0) {
             binding.viewBeforeLine.visibility = View.INVISIBLE

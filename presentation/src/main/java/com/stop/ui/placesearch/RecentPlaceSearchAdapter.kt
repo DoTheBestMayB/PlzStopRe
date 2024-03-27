@@ -12,15 +12,21 @@ class RecentPlaceSearchAdapter(
     private var onItemClick: (PlaceUseCaseItem) -> Unit
 ) : ListAdapter<PlaceUseCaseItem, RecentPlaceSearchAdapter.ViewHolder>(diffUtil) {
 
-    class ViewHolder(private val binding: ItemRecentSearchBinding) : RecyclerView.ViewHolder(binding.root) {
+    class ViewHolder(private val binding: ItemRecentSearchBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(placeUseCaseItem: PlaceUseCaseItem) {
-            binding.placeItem = placeUseCaseItem
-            binding.executePendingBindings()
+            binding.textViewRecentSearchTitle.text = placeUseCaseItem.name
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(ItemRecentSearchBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        return ViewHolder(
+            ItemRecentSearchBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
+        )
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -32,11 +38,17 @@ class RecentPlaceSearchAdapter(
 
     companion object {
         val diffUtil = object : DiffUtil.ItemCallback<PlaceUseCaseItem>() {
-            override fun areItemsTheSame(oldItem: PlaceUseCaseItem, newItem: PlaceUseCaseItem): Boolean {
+            override fun areItemsTheSame(
+                oldItem: PlaceUseCaseItem,
+                newItem: PlaceUseCaseItem
+            ): Boolean {
                 return oldItem.name == newItem.name
             }
 
-            override fun areContentsTheSame(oldItem: PlaceUseCaseItem, newItem: PlaceUseCaseItem): Boolean {
+            override fun areContentsTheSame(
+                oldItem: PlaceUseCaseItem,
+                newItem: PlaceUseCaseItem
+            ): Boolean {
                 return oldItem == newItem
             }
         }

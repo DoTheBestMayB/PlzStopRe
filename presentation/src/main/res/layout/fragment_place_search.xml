@@ -1,108 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:bind="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.placesearch.PlaceSearchFragment">
 
-    <data>
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guide_line_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="15dp" />
 
-        <import type="android.view.View" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guide_line_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="15dp" />
 
-        <variable
-            name="viewModel"
-            type="com.stop.ui.placesearch.PlaceSearchViewModel" />
-    </data>
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="50dp" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".ui.placesearch.PlaceSearchFragment">
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/text_input_layout_place_search"
+        style="@style/TextInputLayoutStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:theme="@style/TextInputLayoutStyle"
+        app:boxCornerRadiusBottomEnd="15dp"
+        app:boxCornerRadiusBottomStart="15dp"
+        app:boxCornerRadiusTopEnd="15dp"
+        app:boxCornerRadiusTopStart="15dp"
+        app:endIconMode="clear_text"
+        app:layout_constraintEnd_toEndOf="@id/guide_line_end"
+        app:layout_constraintStart_toStartOf="@id/guide_line_start"
+        app:layout_constraintTop_toTopOf="@id/guideline_top">
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guide_line_start"
-            android:layout_width="wrap_content"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/text_input_edit_text_place_search"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_begin="15dp" />
+            android:hint="@string/search_hint"
+            android:imeOptions="actionSearch"
+            android:inputType="text"
+            android:paddingStart="50dp"
+            android:paddingEnd="0dp"
+            android:textColorHint="@color/main_light_grey"
+            android:textSize="17sp" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guide_line_end"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_end="15dp" />
+    <ImageView
+        android:layout_width="23dp"
+        android:layout_height="23dp"
+        android:layout_marginStart="17dp"
+        android:layout_marginTop="5dp"
+        android:src="@drawable/ic_search"
+        app:layout_constraintBottom_toBottomOf="@id/text_input_layout_place_search"
+        app:layout_constraintStart_toStartOf="@id/text_input_layout_place_search"
+        app:layout_constraintTop_toTopOf="@id/text_input_layout_place_search" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline_top"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_begin="50dp" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_place"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/guide_line_end"
+        app:layout_constraintStart_toStartOf="@id/guide_line_start"
+        app:layout_constraintTop_toBottomOf="@id/text_input_layout_place_search"
+        tools:visibility="gone" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/text_input_layout_place_search"
-            style="@style/TextInputLayoutStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:theme="@style/TextInputLayoutStyle"
-            app:endIconMode="clear_text"
-            app:layout_constraintEnd_toEndOf="@id/guide_line_end"
-            app:layout_constraintStart_toStartOf="@id/guide_line_start"
-            app:layout_constraintTop_toTopOf="@id/guideline_top"
-            app:boxCornerRadiusBottomEnd="15dp"
-            app:boxCornerRadiusBottomStart="15dp"
-            app:boxCornerRadiusTopEnd="15dp"
-            app:boxCornerRadiusTopStart="15dp">
+    <include
+        android:id="@+id/layout_recent_search"
+        layout="@layout/layout_recent_search"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/guide_line_end"
+        app:layout_constraintStart_toStartOf="@id/guide_line_start"
+        app:layout_constraintTop_toBottomOf="@id/text_input_layout_place_search" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/text_input_edit_text_place_search"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/search_hint"
-                android:textColorHint="@color/main_light_grey"
-                android:imeOptions="actionSearch"
-                android:inputType="text"
-                android:textSize="17sp"
-                android:paddingStart="50dp"
-                android:paddingEnd="0dp" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <ImageView
-            android:layout_width="23dp"
-            android:layout_height="23dp"
-            android:src="@drawable/ic_search"
-            android:layout_marginStart="17dp"
-            android:layout_marginTop="5dp"
-            app:layout_constraintBottom_toBottomOf="@id/text_input_layout_place_search"
-            app:layout_constraintStart_toStartOf="@id/text_input_layout_place_search"
-            app:layout_constraintTop_toTopOf="@id/text_input_layout_place_search" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view_place"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginTop="16dp"
-            android:visibility="@{viewModel.isNearPlacesNotEmpty ? View.VISIBLE : View.GONE}"
-            app:items="@{viewModel.nearPlaces}"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@id/guide_line_end"
-            app:layout_constraintStart_toStartOf="@id/guide_line_start"
-            app:layout_constraintTop_toBottomOf="@id/text_input_layout_place_search"
-            tools:visibility="gone" />
-
-        <include
-            android:id="@+id/layout_recent_search"
-            layout="@layout/layout_recent_search"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:visibility="@{viewModel.isNearPlacesNotEmpty ? View.GONE : View.VISIBLE}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@id/guide_line_end"
-            app:layout_constraintStart_toStartOf="@id/guide_line_start"
-            app:layout_constraintTop_toBottomOf="@id/text_input_layout_place_search"
-            bind:viewModel="@{viewModel}" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-</layout>
+</androidx.constraintlayout.widget.ConstraintLayout>

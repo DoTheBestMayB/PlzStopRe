@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.stop.R
 import com.stop.databinding.ItemNearPlaceBinding
 import com.stop.domain.model.nearplace.PlaceUseCaseItem
 
@@ -12,15 +13,24 @@ class PlaceSearchAdapter(
     private val onItemClick: (PlaceUseCaseItem) -> Unit
 ) : ListAdapter<PlaceUseCaseItem, PlaceSearchAdapter.ViewHolder>(diffUtil) {
 
-    class ViewHolder(private val binding: ItemNearPlaceBinding) : RecyclerView.ViewHolder(binding.root) {
+    class ViewHolder(private val binding: ItemNearPlaceBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(placeUseCaseItem: PlaceUseCaseItem) {
-            binding.place = placeUseCaseItem
-            binding.executePendingBindings()
+            binding.textViewDistance.text =
+                binding.root.context.getString(R.string.distance_km).format(placeUseCaseItem.radius)
+            binding.textViewNearPlaceName.text = placeUseCaseItem.name
+            binding.textViewRoadAddressName.text = placeUseCaseItem.fullAddressRoad
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(ItemNearPlaceBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        return ViewHolder(
+            ItemNearPlaceBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
+        )
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -32,11 +42,17 @@ class PlaceSearchAdapter(
 
     companion object {
         val diffUtil = object : DiffUtil.ItemCallback<PlaceUseCaseItem>() {
-            override fun areItemsTheSame(oldItem: PlaceUseCaseItem, newItem: PlaceUseCaseItem): Boolean {
+            override fun areItemsTheSame(
+                oldItem: PlaceUseCaseItem,
+                newItem: PlaceUseCaseItem
+            ): Boolean {
                 return oldItem.name == newItem.name
             }
 
-            override fun areContentsTheSame(oldItem: PlaceUseCaseItem, newItem: PlaceUseCaseItem): Boolean {
+            override fun areContentsTheSame(
+                oldItem: PlaceUseCaseItem,
+                newItem: PlaceUseCaseItem
+            ): Boolean {
                 return oldItem == newItem
             }
         }

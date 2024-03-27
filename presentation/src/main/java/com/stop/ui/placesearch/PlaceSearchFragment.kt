@@ -8,16 +8,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.stop.R
-import com.stop.bindingadapter.textChangesToFlow
 import com.stop.databinding.FragmentPlaceSearchBinding
 import com.stop.domain.model.nearplace.PlaceUseCaseItem
+import com.stop.ui.util.textChangesToFlow
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.debounce
@@ -41,18 +42,8 @@ class PlaceSearchFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_place_search, container, false)
-
-        initBinding()
-
+        _binding = FragmentPlaceSearchBinding.inflate(layoutInflater, container, false)
         return binding.root
-    }
-
-    private fun initBinding() {
-        binding.apply {
-            lifecycleOwner = viewLifecycleOwner
-            viewModel = placeSearchViewModel
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -60,10 +51,11 @@ class PlaceSearchFragment : Fragment() {
 
         initTextEditText()
         initAdapter()
-        buttonClick()
+        setListener()
         listenEditTextChange()
         logErrorMessage()
         listenSearchEditText()
+        setObserve()
     }
 
     private fun initTextEditText() {
@@ -91,17 +83,18 @@ class PlaceSearchFragment : Fragment() {
         findNavController().popBackStack(R.id.mapFragment, false)
     }
 
-    private fun buttonClick() {
-        with(binding) {
-            layoutRecentSearch.textViewCurrentLocation.setOnClickListener {
-                placeSearchViewModel.setClickCurrentLocation()
+    private fun setListener() {
+        binding.layoutRecentSearch.textViewCurrentLocation.setOnClickListener {
+            placeSearchViewModel.setClickCurrentLocation()
 
-                findNavController().popBackStack(R.id.mapFragment, false)
-            }
+            findNavController().popBackStack(R.id.mapFragment, false)
+        }
 
-            layoutRecentSearch.textViewSelectMap.setOnClickListener {
-                findNavController().popBackStack(R.id.mapFragment, false)
-            }
+        binding.layoutRecentSearch.textViewSelectMap.setOnClickListener {
+            findNavController().popBackStack(R.id.mapFragment, false)
+        }
+        binding.layoutRecentSearch.textViewHistoryDelete.setOnClickListener {
+            placeSearchViewModel.deleteRecentSearchPlace()
         }
     }
 
@@ -126,12 +119,14 @@ class PlaceSearchFragment : Fragment() {
     }
 
     private fun showKeyBoard() {
-        val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm =
+            requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.showSoftInput(binding.textInputEditTextPlaceSearch, InputMethodManager.SHOW_IMPLICIT)
     }
 
     private fun hideKeyBoard() {
-        val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm =
+            requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(requireActivity().currentFocus?.windowToken, 0)
     }
 
@@ -165,6 +160,40 @@ class PlaceSearchFragment : Fragment() {
         }
     }
 
+    private fun setObserve() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                placeSearchViewModel.isNearPlacesNotEmpty.collect {
+                    binding.recyclerViewPlace.visibility = if (it) View.VISIBLE else View.GONE
+                    binding.layoutRecentSearch.root.visibility = if (it) View.GONE else View.VISIBLE
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                placeSearchViewModel.recentPlaceSearch.collect {
+                    recentPlaceSearchAdapter.submitList(it)
+                    binding.layoutRecentSearch.textViewHistoryDelete.visibility =
+                        if (it.isEmpty()) View.GONE else View.VISIBLE
+                    binding.layoutRecentSearch.imageViewNoData.visibility =
+                        if (it.isEmpty()) View.VISIBLE else View.GONE
+                    binding.layoutRecentSearch.textViewNoData.visibility =
+                        if (it.isEmpty()) View.VISIBLE else View.GONE
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                placeSearchViewModel.nearPlaces.collect {
+                    placeSearchAdapter.submitList(it)
+                }
+            }
+        }
+
+    }
+
     override fun onDestroyView() {
         _binding = null
 
@@ -174,5 +203,4 @@ class PlaceSearchFragment : Fragment() {
     companion object {
         private const val PLACE_SEARCH_FRAGMENT = "PLACE_SEARCH_FRAGMENT"
     }
-
 }

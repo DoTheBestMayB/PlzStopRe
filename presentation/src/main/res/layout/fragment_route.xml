@@ -1,111 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.route.RouteFragment">
 
-    <data>
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="15dp" />
 
-        <variable
-            name="viewModel"
-            type="com.stop.ui.route.RouteViewModel" />
-    </data>
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="15dp" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".ui.route.RouteFragment">
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="50dp" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline_start"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_begin="15dp" />
+    <TextView
+        android:id="@+id/text_view_origin"
+        android:layout_width="0dp"
+        android:layout_height="47dp"
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/background_alarm_panel"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:maxLines="1"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:text="@string/start"
+        android:textColor="@color/main_light_grey"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toStartOf="@id/image_view_exit"
+        app:layout_constraintStart_toStartOf="@id/guideline_start"
+        app:layout_constraintTop_toBottomOf="@id/guideline_top"
+        tools:text="이앤씨벤쳐드림타워3차" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline_end"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_end="15dp" />
+    <TextView
+        android:id="@+id/text_view_destination"
+        android:layout_width="0dp"
+        android:layout_height="47dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/background_alarm_panel"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:maxLines="1"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:text="@string/end"
+        android:textColor="@color/main_light_grey"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toStartOf="@id/image_view_swap_origin_with_destination"
+        app:layout_constraintStart_toStartOf="@id/guideline_start"
+        app:layout_constraintTop_toBottomOf="@id/text_view_origin"
+        tools:text="Naver1784" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline_top"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_begin="50dp" />
+    <ImageView
+        android:id="@+id/image_view_exit"
+        android:layout_width="33dp"
+        android:layout_height="33dp"
+        android:contentDescription="@string/image_view_exit_content_description"
+        app:layout_constraintBottom_toBottomOf="@id/text_view_origin"
+        app:layout_constraintEnd_toEndOf="@id/guideline_end"
+        app:layout_constraintTop_toTopOf="@id/text_view_origin"
+        app:srcCompat="@drawable/ic_baseline_close_24" />
 
-        <TextView
-            android:id="@+id/text_view_origin"
-            android:layout_width="0dp"
-            android:layout_height="47dp"
-            android:layout_marginEnd="10dp"
-            android:background="@drawable/background_alarm_panel"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:textSize="15sp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:gravity="center_vertical"
-            app:layout_constraintEnd_toStartOf="@id/image_view_exit"
-            app:layout_constraintStart_toStartOf="@id/guideline_start"
-            app:layout_constraintTop_toBottomOf="@id/guideline_top"
-            app:set_place_name="@{viewModel.origin}"
-            app:set_text="@{@string/start}"
-            tools:text="이앤씨벤쳐드림타워3차" />
+    <ImageView
+        android:id="@+id/image_view_swap_origin_with_destination"
+        android:layout_width="33dp"
+        android:layout_height="33dp"
+        android:contentDescription="@string/image_view_swap_origin_with_destination_content_description"
+        app:layout_constraintBottom_toBottomOf="@id/text_view_destination"
+        app:layout_constraintEnd_toEndOf="@id/guideline_end"
+        app:layout_constraintTop_toTopOf="@id/text_view_destination"
+        app:srcCompat="@drawable/ic_baseline_swap_vert_24" />
 
-        <TextView
-            android:id="@+id/text_view_destination"
-            android:layout_width="0dp"
-            android:layout_height="47dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/background_alarm_panel"
-            android:ellipsize="end"
-            android:gravity="center_vertical"
-            android:maxLines="1"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:textSize="15sp"
-            app:layout_constraintStart_toStartOf="@id/guideline_start"
-            app:layout_constraintEnd_toStartOf="@id/image_view_swap_origin_with_destination"
-            app:layout_constraintTop_toBottomOf="@id/text_view_origin"
-            app:set_place_name="@{viewModel.destination}"
-            app:set_text="@{@string/end}"
-            tools:text="Naver1784" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerview_route"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/guideline_end"
+        app:layout_constraintStart_toStartOf="@id/guideline_start"
+        app:layout_constraintTop_toBottomOf="@id/text_view_destination"
+        tools:listitem="@layout/item_route" />
 
-        <ImageView
-            android:id="@+id/image_view_exit"
-            android:layout_width="33dp"
-            android:layout_height="33dp"
-            android:contentDescription="@string/image_view_exit_content_description"
-            app:layout_constraintBottom_toBottomOf="@id/text_view_origin"
-            app:layout_constraintEnd_toEndOf="@id/guideline_end"
-            app:layout_constraintTop_toTopOf="@id/text_view_origin"
-            app:srcCompat="@drawable/ic_baseline_close_24" />
-
-        <ImageView
-            android:id="@+id/image_view_swap_origin_with_destination"
-            android:layout_width="33dp"
-            android:layout_height="33dp"
-            android:contentDescription="@string/image_view_swap_origin_with_destination_content_description"
-            app:layout_constraintBottom_toBottomOf="@id/text_view_destination"
-            app:layout_constraintEnd_toEndOf="@id/guideline_end"
-            app:layout_constraintTop_toTopOf="@id/text_view_destination"
-            app:srcCompat="@drawable/ic_baseline_swap_vert_24" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerview_route"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginTop="16dp"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/guideline_end"
-            app:layout_constraintStart_toStartOf="@id/guideline_start"
-            app:layout_constraintTop_toBottomOf="@id/text_view_destination"
-            tools:listitem="@layout/item_route" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</layout>
+</androidx.constraintlayout.widget.ConstraintLayout>

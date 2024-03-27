@@ -98,8 +98,15 @@ class MissionFragment : Fragment(), MissionHandler {
                     intent?.getParcelableArrayListExtra<Location>(MISSION_LOCATIONS) as ArrayList<Location>
             }
         }
-
-        requireActivity().registerReceiver(userInfoReceiver, intentFilter)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requireActivity().registerReceiver(
+                userInfoReceiver,
+                intentFilter,
+                Context.RECEIVER_NOT_EXPORTED
+            )
+        } else {
+            requireActivity().registerReceiver(userInfoReceiver, intentFilter)
+        }
     }
 
     private fun setTimeOverBroadcastReceiver() {
@@ -120,7 +127,15 @@ class MissionFragment : Fragment(), MissionHandler {
 
             }
         }
-        requireActivity().registerReceiver(timeReceiver, intentFilter)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requireActivity().registerReceiver(
+                timeReceiver,
+                intentFilter,
+                Context.RECEIVER_NOT_EXPORTED
+            )
+        } else {
+            requireActivity().registerReceiver(timeReceiver, intentFilter)
+        }
     }
 
     private fun setFailAnimation() {
@@ -146,28 +161,44 @@ class MissionFragment : Fragment(), MissionHandler {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMissionBinding.inflate(layoutInflater)
-
-        initBinding()
-
         return binding.root
-    }
-
-    private fun initBinding() {
-        alarmSettingViewModel.getAlarm()
-
-        binding.lifecycleOwner = viewLifecycleOwner
-        binding.missionViewModel = missionViewModel
-        binding.alarmSettingViewModel = alarmSettingViewModel
-        binding.fragment = this@MissionFragment
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setAlarm()
         setTimer()
         initTMap()
         setMissionOver()
         checkLocationPermission()
+        setObserve()
+        setListener()
+    }
+
+    private fun setAlarm() {
+        alarmSettingViewModel.getAlarm()
+    }
+
+    private fun setObserve() {
+        missionViewModel.lastTime.observe(viewLifecycleOwner) {
+            binding.textViewTimeLeft.text = it
+        }
+    }
+
+    private fun setListener() {
+        binding.layoutMissionClose.setOnClickListener {
+            clickMissionOver()
+        }
+        binding.layoutCompass.setOnClickListener {
+            setCompassMode()
+        }
+        binding.layoutZoomOut.setOnClickListener {
+            setZoomOut()
+        }
+        binding.imageViewPersonCurrentLocation.setOnClickListener {
+            setPersonCurrent()
+        }
     }
 
     private fun setTimer() {
@@ -209,6 +240,11 @@ class MissionFragment : Fragment(), MissionHandler {
                         startActivity(this)
                     }
                 }
+            }
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            missionViewModel.destination.collect {
+                binding.textViewDestination.text = it.name
             }
         }
     }
