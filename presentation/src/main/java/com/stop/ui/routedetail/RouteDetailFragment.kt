@@ -12,6 +12,7 @@ import com.stop.R
 import com.stop.databinding.FragmentRouteDetailBinding
 import com.stop.domain.model.route.tmap.custom.Coordinate
 import com.stop.ui.route.RouteResultViewModel
+import com.stop.ui.util.DrawerStringUtils
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -31,15 +32,7 @@ class RouteDetailFragment : Fragment(), RouteDetailHandler {
     ): View {
         _binding = FragmentRouteDetailBinding.inflate(inflater, container, false)
 
-        initBinding()
-
         return binding.root
-    }
-
-    private fun initBinding() {
-        binding.lifecycleOwner = viewLifecycleOwner
-        binding.routeResultViewModel = routeResultViewModel
-        binding.itinerary = routeResultViewModel.itinerary.value
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -48,6 +41,7 @@ class RouteDetailFragment : Fragment(), RouteDetailHandler {
         initTMap()
         initView()
         setRecyclerView()
+        setObserve()
     }
 
     private fun initTMap() {
@@ -88,6 +82,25 @@ class RouteDetailFragment : Fragment(), RouteDetailHandler {
 
         binding.routeDetailDrawer.recyclerViewRouteDetail.adapter = adapter
         adapter.submitList(routeResultViewModel.getRouteItems())
+    }
+
+    private fun setObserve() {
+        routeResultViewModel.origin.observe(viewLifecycleOwner) {
+            binding.textViewOrigin.text = it.name
+        }
+        routeResultViewModel.destination.observe(viewLifecycleOwner) {
+            binding.textViewDestination.text = it.name
+        }
+        routeResultViewModel.itinerary.observe(viewLifecycleOwner) {
+            binding.routeDetailDrawer.textViewTime.text = DrawerStringUtils.getTimeString(it.totalTime)
+            binding.routeDetailDrawer.textViewInformation.text = DrawerStringUtils.getTopInformationString(it)
+        }
+        routeResultViewModel.isLastTimeAvailable.observe(viewLifecycleOwner) {
+            binding.routeDetailDrawer.viewAlarm.visibility = if (it) View.VISIBLE else View.INVISIBLE
+            binding.routeDetailDrawer.viewAlarm2.visibility = if (it) View.INVISIBLE else View.VISIBLE
+            binding.routeDetailDrawer.constraintLayoutAlertCantDo.visibility = if (it) View.VISIBLE else View.INVISIBLE
+            binding.routeDetailDrawer.textViewAlarmTextCantSet.visibility = if (it) View.INVISIBLE else View.VISIBLE
+        }
     }
 
     override fun alertTMapReady() {

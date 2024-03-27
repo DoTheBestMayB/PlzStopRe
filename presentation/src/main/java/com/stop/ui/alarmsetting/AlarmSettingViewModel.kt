@@ -48,7 +48,7 @@ class AlarmSettingViewModel @Inject constructor(
 
     private lateinit var workerId: UUID
 
-    val alarmTime = MutableLiveData(0)
+    private val alarmTime = MutableLiveData(0)
     var alarmMethod = true
 
     fun saveAlarm(alarmUseCaseItem: AlarmUseCaseItem) {
@@ -130,6 +130,10 @@ class AlarmSettingViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun updateTime(newVal: Int) {
+        alarmTime.value = newVal
     }
 
 }

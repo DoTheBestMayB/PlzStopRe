@@ -1,4 +1,4 @@
-package com.stop.bindingadapter
+package com.stop.ui.util
 
 import android.text.Editable
 import android.text.TextWatcher

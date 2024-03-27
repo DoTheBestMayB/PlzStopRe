@@ -16,9 +16,11 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.skt.tmap.TMapPoint
@@ -58,18 +60,7 @@ class MapFragment : Fragment(), MapHandler {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMapBinding.inflate(inflater, container, false)
-
-        initBinding()
-
         return binding.root
-    }
-
-    private fun initBinding() {
-        binding.lifecycleOwner = viewLifecycleOwner
-        binding.alarmViewModel = alarmViewModel
-        binding.placeSearchViewModel = placeSearchViewModel
-        binding.missionViewModel = missionViewModel
-        binding.fragment = this@MapFragment
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -79,6 +70,62 @@ class MapFragment : Fragment(), MapHandler {
         initBottomSheetBehavior()
         initBottomSheetView()
         setBroadcastReceiver()
+        setObserve()
+        setListener()
+    }
+
+    private fun setObserve() {
+        placeSearchViewModel.panelVisibility.observe(viewLifecycleOwner) {
+            binding.homePanel.layoutPanel.visibility = it
+        }
+
+        placeSearchViewModel.geoLocation.observe(viewLifecycleOwner) {
+            binding.homePanel.textViewPanelTitle.text = it.title
+            binding.homePanel.textViewPanelAddress.text = it.roadAddress
+        }
+        placeSearchViewModel.distance.observe(viewLifecycleOwner) {
+            binding.homePanel.textViewPanelDistance.text = it.toString()
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                alarmViewModel.alarmStatus.collect {
+                    binding.homeBottomSheet.textViewAlarmState.text = it.text
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                alarmViewModel.alarmItem.collect {
+                    if (it == null) {
+                        return@collect
+                    }
+                    binding.homeBottomSheet.layoutStateExpanded.textViewStartPositionInfo.text =
+                        it.startPosition
+                    binding.homeBottomSheet.layoutStateExpanded.textViewEndPositionInfo.text =
+                        it.endPosition
+                    binding.homeBottomSheet.layoutStateExpanded.textViewLastTimeInfo.text =
+                        it.lastTime
+                    binding.homeBottomSheet.layoutStateExpanded.textViewWalkTimeInfo.text =
+                        requireContext().getString(R.string.walk_time_text).format(it.walkTime)
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                missionViewModel.missionStatus.collect {
+                    binding.homeBottomSheet.layoutStateExpanded.textViewMissionStart.text = it.text
+                }
+            }
+        }
+    }
+
+    private fun setListener() {
+        binding.homeBottomSheet.layoutStateExpanded.layoutMissionStart.setOnClickListener {
+            setMissionStart()
+        }
     }
 
     private fun initTMap() {
@@ -106,9 +153,11 @@ class MapFragment : Fragment(), MapHandler {
                 AlarmStatus.NON_EXIST -> {
                     behavior.isDraggable = false
                 }
+
                 AlarmStatus.EXIST -> {
                     behavior.isDraggable = true
                 }
+
                 AlarmStatus.MISSION -> {
                     behavior.isDraggable = true
                 }
@@ -165,7 +214,11 @@ class MapFragment : Fragment(), MapHandler {
             }
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            requireActivity().registerReceiver(receiver, intentFilter, Context.RECEIVER_NOT_EXPORTED)
+            requireActivity().registerReceiver(
+                receiver,
+                intentFilter,
+                Context.RECEIVER_NOT_EXPORTED
+            )
         } else {
             requireActivity().registerReceiver(receiver, intentFilter)
         }
@@ -333,7 +386,8 @@ class MapFragment : Fragment(), MapHandler {
     fun setMissionStart() {
         Intent(requireContext(), AlarmActivity::class.java).apply {
             putExtra("MISSION_CODE", MissionService.MISSION_CODE)
-            flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            flags =
+                Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
             startActivity(this)
         }
     }

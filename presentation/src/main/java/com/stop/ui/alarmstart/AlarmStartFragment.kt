@@ -31,29 +31,16 @@ class AlarmStartFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentAlarmStartBinding.inflate(
-            inflater,
-            container,
-            false
-        )
-
-        initBinding()
-
+        _binding = FragmentAlarmStartBinding.inflate(inflater, container, false)
         return binding.root
-    }
-
-    private fun initBinding() {
-        binding.apply {
-            lifecycleOwner = viewLifecycleOwner
-            viewModel = alarmSettingViewModel
-            fragment = this@AlarmStartFragment
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         initView()
+        setObserve()
+        setListener()
     }
 
     private fun initView() {
@@ -65,19 +52,41 @@ class AlarmStartFragment : Fragment() {
                 .collect {
                     it?.let {
                         alarmSettingViewModel.startCountDownTimer(it.lastTime)
+                        binding.textViewStartPosition.text = it.startPosition
+                        binding.textViewStartPositionInfo.text = it.startPosition
+                        binding.textViewEndPosition.text = it.endPosition
+                        binding.textViewEndPositionInfo.text = it.endPosition
+                        binding.textViewLastTimeInfo.text = it.lastTime
+                        binding.textViewWalkTimeInfo.text =
+                            requireContext().getString(R.string.walk_time_text).format(it.walkTime)
                     }
                 }
         }
     }
 
-    fun clickAlarmTurnOff() {
+    private fun setObserve() {
+        alarmSettingViewModel.lastTimeCountDown.observe(viewLifecycleOwner) {
+            binding.textViewTimeLeft.text = it
+        }
+    }
+
+    private fun setListener() {
+        binding.viewMission.setOnClickListener {
+            clickMissionStart()
+        }
+        binding.viewAlarm.setOnClickListener {
+            clickAlarmTurnOff()
+        }
+    }
+
+    private fun clickAlarmTurnOff() {
         turnOffSoundService()
         alarmSettingViewModel.deleteAlarm()
         cancelNotification()
         requireActivity().finish()
     }
 
-    fun clickMissionStart() {
+    private fun clickMissionStart() {
         turnOffSoundService()
         cancelNotification()
         binding.root.findNavController().navigate(R.id.action_alarmStartFragment_to_missionFragment)
@@ -90,7 +99,8 @@ class AlarmStartFragment : Fragment() {
     }
 
     private fun cancelNotification() {
-        val notificationManager = requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager =
+            requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.cancel(ALARM_NOTIFICATION_HIGH_ID)
     }
 
@@ -99,7 +109,8 @@ class AlarmStartFragment : Fragment() {
 
         requireActivity().intent.extras?.getInt("MISSION_CODE")?.let {
             if (it == MISSION_CODE) {
-                binding.root.findNavController().navigate(R.id.action_alarmStartFragment_to_missionFragment)
+                binding.root.findNavController()
+                    .navigate(R.id.action_alarmStartFragment_to_missionFragment)
             }
         }
     }

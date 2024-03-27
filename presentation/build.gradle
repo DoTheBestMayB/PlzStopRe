@@ -2,7 +2,6 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'androidx.navigation.safeargs'
-    id 'kotlin-kapt'
     id 'kotlin-parcelize'
     id 'com.google.dagger.hilt.android'
     id("com.google.devtools.ksp")
@@ -43,7 +42,6 @@ android {
 
     buildFeatures {
         viewBinding true
-        dataBinding true
         buildConfig true
     }
 }

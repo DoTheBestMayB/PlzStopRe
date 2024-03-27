@@ -1,124 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:theme="@style/Theme.Material3.Light.NoActionBar">
 
-    <data>
+    <TextView
+        android:id="@+id/text_view_current_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:drawablePadding="7dp"
+        android:text="@string/current_location_text"
+        android:textColor="@color/main_dark_grey"
+        android:textSize="14sp"
+        app:drawableStartCompat="@drawable/ic_location_mini"
+        app:layout_constraintEnd_toStartOf="@id/text_view_select_map"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <import type="android.view.View" />
+    <TextView
+        android:id="@+id/text_view_select_map"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:drawablePadding="7dp"
+        android:text="@string/select_map_text"
+        android:textColor="@color/main_dark_grey"
+        android:textSize="14sp"
+        app:drawableStartCompat="@drawable/ic_baseline_map_16"
+        app:layout_constraintBottom_toBottomOf="@id/text_view_current_location"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/text_view_current_location" />
 
-        <variable
-            name="viewModel"
-            type="com.stop.ui.placesearch.PlaceSearchViewModel" />
-    </data>
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/divider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="-17dp"
+        android:layout_marginTop="10dp"
+        app:dividerColor="@color/main_lighter_grey"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/text_view_current_location"
+        app:layout_constraintTop_toBottomOf="@id/text_view_current_location" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:theme="@style/Theme.Material3.Light.NoActionBar">
+    <TextView
+        android:id="@+id/text_view_recent_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/recent_search_text"
+        android:textColor="@color/main_dark_grey"
+        android:textSize="23sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/divider" />
 
-        <TextView
-            android:id="@+id/text_view_current_location"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
-            android:layout_marginTop="10dp"
-            android:drawablePadding="7dp"
-            android:text="@string/current_location_text"
-            android:textColor="@color/main_dark_grey"
-            android:textSize="14sp"
-            app:drawableStartCompat="@drawable/ic_location_mini"
-            app:layout_constraintEnd_toStartOf="@id/text_view_select_map"
-            app:layout_constraintTop_toTopOf="parent" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_recent_search"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="12dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toTopOf="@id/text_view_history_delete"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_view_recent_search" />
 
-        <TextView
-            android:id="@+id/text_view_select_map"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:drawablePadding="7dp"
-            android:text="@string/select_map_text"
-            android:textColor="@color/main_dark_grey"
-            android:textSize="14sp"
-            app:drawableStartCompat="@drawable/ic_baseline_map_16"
-            app:layout_constraintBottom_toBottomOf="@id/text_view_current_location"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/text_view_current_location" />
+    <TextView
+        android:id="@+id/text_view_history_delete"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:gravity="center"
+        android:text="@string/delete_recent_search_text"
+        android:textColor="@color/blue"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/recycler_view_recent_search" />
 
-        <com.google.android.material.divider.MaterialDivider
-            android:id="@+id/divider"
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_marginStart="-17dp"
-            android:layout_marginTop="10dp"
-            app:dividerColor="@color/main_lighter_grey"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@id/text_view_current_location"
-            app:layout_constraintTop_toBottomOf="@id/text_view_current_location" />
+    <ImageView
+        android:id="@+id/image_view_no_data"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_view_recent_search"
+        app:layout_constraintVertical_bias="0.4"
+        app:srcCompat="@drawable/icon_error" />
 
-        <TextView
-            android:id="@+id/text_view_recent_search"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="@string/recent_search_text"
-            android:textColor="@color/main_dark_grey"
-            android:textSize="23sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/divider" />
+    <TextView
+        android:id="@+id/text_view_no_data"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/recent_search_no_data_tet"
+        android:textColor="@color/main_light_grey_2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/image_view_no_data" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view_recent_search"
-            items="@{viewModel.recentPlaceSearch}"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="12dp"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintBottom_toTopOf="@id/text_view_history_delete"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/text_view_recent_search" />
-
-        <TextView
-            android:id="@+id/text_view_history_delete"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:gravity="center"
-            android:onClick="@{() -> viewModel.deleteRecentSearchPlace()}"
-            android:text="@string/delete_recent_search_text"
-            android:textColor="@color/blue"
-            android:textSize="15sp"
-            android:visibility="@{viewModel.recentPlaceSearch.empty ? View.GONE : View.VISIBLE}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/recycler_view_recent_search" />
-
-        <ImageView
-            android:id="@+id/image_view_no_data"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="@{viewModel.recentPlaceSearch.empty ? View.VISIBLE : View.GONE}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/text_view_recent_search"
-            app:layout_constraintVertical_bias="0.4"
-            app:srcCompat="@drawable/icon_error" />
-
-        <TextView
-            android:id="@+id/text_view_no_data"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="@string/recent_search_no_data_tet"
-            android:textColor="@color/main_light_grey_2"
-            android:visibility="@{viewModel.recentPlaceSearch.empty ? View.VISIBLE : View.GONE}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/image_view_no_data" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-</layout>
+</androidx.constraintlayout.widget.ConstraintLayout>
