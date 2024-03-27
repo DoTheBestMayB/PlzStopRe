@@ -30,6 +30,10 @@ android {
         buildConfigField "String", "SW_OPEN_API_SEOUL_URL", properties['sw_open_api_seoul_url']
     }
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     buildTypes {
         release {
             minifyEnabled false
