@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -163,8 +164,11 @@ class MapFragment : Fragment(), MapHandler {
                 }
             }
         }
-
-        requireActivity().registerReceiver(receiver, intentFilter)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requireActivity().registerReceiver(receiver, intentFilter, Context.RECEIVER_NOT_EXPORTED)
+        } else {
+            requireActivity().registerReceiver(receiver, intentFilter)
+        }
     }
 
     override fun alertTMapReady() {
