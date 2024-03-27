@@ -4,7 +4,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.5.3"
+        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.7.7"
     }
 }
 
@@ -16,5 +16,5 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.9.22' apply false
 
     // Hilt
-    id 'com.google.dagger.hilt.android' version '2.44' apply false
+    id 'com.google.dagger.hilt.android' version '2.48.1' apply false
 }
