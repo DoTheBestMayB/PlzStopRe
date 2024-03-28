@@ -28,8 +28,8 @@ interface RouteRepository {
         weekType: WeekType,
     ): List<StationLastTime>
 
-    suspend fun getSeoulBusStationArsId(stationName: String): List<BusStationInfo>
-    suspend fun getSeoulBusRoute(stationId: String): List<BusRouteInfo>
+    suspend fun getSeoulBusStationArsId(stationName: String): List<SeoulBusStationInfo>
+    suspend fun getSeoulBusRoute(stationId: String): List<SeoulBusRouteInfo>
     suspend fun getSeoulBusLastTime(stationId: String, lineId: String): List<LastTimeInfo>
     suspend fun getSubwayRoute(
         routeRequest: RouteRequest,
@@ -42,4 +42,6 @@ interface RouteRepository {
     suspend fun getGyeonggiBusRoute(stationId: String): List<GyeonggiBusRoute>
     suspend fun getGyeonggiBusLastTime(lineId: String): List<GyeonggiBusLastTime>
     suspend fun getGyeonggiBusRouteStations(lineId: String): List<GyeonggiBusStation>
+    suspend fun getBusRouteInfo(routeName: String): List<BusRouteInfo>
+    suspend fun getSeoulBusStations(routeId: String): List<BusStationInfo>
 }

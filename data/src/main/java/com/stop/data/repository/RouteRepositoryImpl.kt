@@ -92,7 +92,7 @@ internal class RouteRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getSeoulBusStationArsId(stationName: String): List<BusStationInfo> {
+    override suspend fun getSeoulBusStationArsId(stationName: String): List<SeoulBusStationInfo> {
         return  try {
             remoteDataSource.getSeoulBusStationArsId(stationName)
         } catch (exception: JsonDataException) {
@@ -100,7 +100,7 @@ internal class RouteRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getSeoulBusRoute(stationId: String): List<BusRouteInfo> {
+    override suspend fun getSeoulBusRoute(stationId: String): List<SeoulBusRouteInfo> {
         return try {
             remoteDataSource.getSeoulBusRoute(stationId)
         } catch (exception: JsonDataException) {
@@ -146,5 +146,13 @@ internal class RouteRepositoryImpl @Inject constructor(
         } catch (exception: NullPointerException) {
             listOf()
         }
+    }
+
+    override suspend fun getBusRouteInfo(routeName: String): List<BusRouteInfo> {
+        return remoteDataSource.getBusRouteList(routeName)
+    }
+
+    override suspend fun getSeoulBusStations(routeId: String): List<BusStationInfo> {
+        return remoteDataSource.getBusStations(routeId)
     }
 }

@@ -3,6 +3,7 @@ package com.stop.data.remote.source.route
 import com.squareup.moshi.JsonDataException
 import com.stop.data.remote.model.NetworkResult
 import com.stop.data.remote.network.ApisDataService
+import com.stop.data.remote.network.FakeTmapApiService
 import com.stop.data.remote.network.OpenApiSeoulService
 import com.stop.data.remote.network.TmapApiService
 import com.stop.data.remote.network.WsBusApiService
@@ -19,6 +20,7 @@ import com.stop.domain.model.route.tmap.origin.*
 import javax.inject.Inject
 
 internal class RouteRemoteDataSourceImpl @Inject constructor(
+    private val fakeTmapApiService: FakeTmapApiService,
     private val tMapApiService: TmapApiService,
     private val openApiSeoulService: OpenApiSeoulService,
     private val wsBusApiService: WsBusApiService,
@@ -27,7 +29,8 @@ internal class RouteRemoteDataSourceImpl @Inject constructor(
 
     override suspend fun getRoute(routeRequest: RouteRequest): List<Itinerary> {
         with(
-            tMapApiService.getRoutes(routeRequest.toMap())
+//            tMapApiService.getRoutes(routeRequest.toMap())
+            fakeTmapApiService.getRoutes(routeRequest.toMap())
         ) {
             return when (this) {
                 is NetworkResult.Success -> {
@@ -125,7 +128,7 @@ internal class RouteRemoteDataSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun getSeoulBusStationArsId(stationName: String): List<BusStationInfo> {
+    override suspend fun getSeoulBusStationArsId(stationName: String): List<SeoulBusStationInfo> {
         with(wsBusApiService.getBusArsId(stationName)) {
             return when (this) {
                 is NetworkResult.Success -> this.data.arsIdMsgBody.busStations
@@ -137,7 +140,7 @@ internal class RouteRemoteDataSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun getSeoulBusRoute(stationId: String): List<BusRouteInfo> {
+    override suspend fun getSeoulBusRoute(stationId: String): List<SeoulBusRouteInfo> {
         with(wsBusApiService.getBusRoute(stationId)) {
             return when (this) {
                 is NetworkResult.Success -> this.data.routeIdMsgBody.busRoutes
@@ -201,6 +204,28 @@ internal class RouteRemoteDataSourceImpl @Inject constructor(
         with(apisDataService.getBusRouteStations(lineId)) {
             return when (this) {
                 is NetworkResult.Success -> this.data.stations.map { it.toDomain() }
+                is NetworkResult.Failure -> throw IllegalArgumentException(this.message)
+                is NetworkResult.NetworkError -> throw this.exception
+                is NetworkResult.Unexpected -> throw this.exception
+            }
+        }
+    }
+
+    override suspend fun getBusRouteList(routeName: String): List<BusRouteInfo> {
+        with(wsBusApiService.getBusRouteList(routeName)) {
+            return when (this) {
+                is NetworkResult.Success -> this.data.msgBody.busRouteListItemList.map { it.toDomain() }
+                is NetworkResult.Failure -> throw IllegalArgumentException(this.message)
+                is NetworkResult.NetworkError -> throw this.exception
+                is NetworkResult.Unexpected -> throw this.exception
+            }
+        }
+    }
+
+    override suspend fun getBusStations(routeId: String): List<BusStationInfo> {
+        with(wsBusApiService.getBusStations(routeId)) {
+            return when (this) {
+                is NetworkResult.Success -> this.data.msgBody.busStationsItemList.map { it.toDomain() }
                 is NetworkResult.Failure -> throw IllegalArgumentException(this.message)
                 is NetworkResult.NetworkError -> throw this.exception
                 is NetworkResult.Unexpected -> throw this.exception
