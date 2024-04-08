@@ -131,6 +131,7 @@ internal class GetLastTransportTimeUseCaseImpl @Inject constructor(
 
                 is TransportRoute -> {
                     val sectionTime = route.sectionTime.toInt()
+                    val currentCumulativeSectionTime = cumulativeSectionTime
                     cumulativeSectionTime += sectionTime
 
                     val startStation = route.stations.first()
@@ -150,7 +151,7 @@ internal class GetLastTransportTimeUseCaseImpl @Inject constructor(
                         destinationStation = route.end,
                         destinationStationNumber = UNKNOWN_ID,
                         sectionTime = sectionTime,
-                        cumulativeSectionTime = cumulativeSectionTime,
+                        cumulativeSectionTime = currentCumulativeSectionTime,
                     )
                 }
             }
