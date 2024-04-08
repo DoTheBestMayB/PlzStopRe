@@ -8,6 +8,7 @@ import com.stop.domain.model.route.gyeonggi.GyeonggiBusStation
 import com.stop.domain.model.route.seoul.bus.*
 import com.stop.domain.model.route.seoul.subway.Station
 import com.stop.domain.model.route.seoul.subway.StationLastTime
+import com.stop.domain.model.route.seoul.subway.StationType
 import com.stop.domain.model.route.seoul.subway.TransportDirectionType
 import com.stop.domain.model.route.seoul.subway.WeekType
 import com.stop.domain.model.route.tmap.RouteRequest
@@ -20,7 +21,7 @@ interface RouteRepository {
     suspend fun getRoute(routeRequest: RouteRequest): List<Itinerary>
     suspend fun reverseGeocoding(coordinate: Coordinate, addressType: AddressType): ReverseGeocodingResponse
 
-    suspend fun getSubwayStationCd(stationId: String, stationName: String): String
+    suspend fun getSubwayStationCd(stationType: StationType, stationName: String): String
     suspend fun getSubwayStations(lineName: String): List<Station>
     suspend fun getSubwayStationLastTime(
         stationId: String,

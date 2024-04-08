@@ -1,6 +1,7 @@
 package com.stop.data.repository
 
 import com.squareup.moshi.JsonDataException
+import com.stop.domain.model.route.seoul.subway.StationType
 import com.stop.data.remote.source.route.RouteRemoteDataSource
 import com.stop.domain.model.geoLocation.AddressType
 import com.stop.domain.model.nowlocation.SubwayRouteLocationUseCaseItem
@@ -36,9 +37,9 @@ internal class RouteRepositoryImpl @Inject constructor(
         return remoteDataSource.reverseGeocoding(coordinate, addressType)
     }
 
-    override suspend fun getSubwayStationCd(stationId: String, stationName: String): String {
+    override suspend fun getSubwayStationCd(stationType: StationType, stationName: String): String {
         return try {
-            remoteDataSource.getSubwayStationCd(stationId, stationName)
+            remoteDataSource.getSubwayStationCd(stationType, stationName)
         } catch (exception: JsonDataException) {
             ""
         } catch (exception: IllegalArgumentException) {

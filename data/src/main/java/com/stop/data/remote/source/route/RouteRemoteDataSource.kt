@@ -1,5 +1,6 @@
 package com.stop.data.remote.source.route
 
+import com.stop.domain.model.route.seoul.subway.StationType
 import com.stop.domain.model.geoLocation.AddressType
 import com.stop.domain.model.route.gyeonggi.*
 import com.stop.domain.model.route.seoul.bus.BusRouteInfo
@@ -21,7 +22,7 @@ internal interface RouteRemoteDataSource {
     suspend fun getRoute(routeRequest: RouteRequest): List<Itinerary>
     suspend fun reverseGeocoding(coordinate: Coordinate, addressType: AddressType): ReverseGeocodingResponse
 
-    suspend fun getSubwayStationCd(stationId: String, stationName: String): String
+    suspend fun getSubwayStationCd(stationType: StationType, stationName: String): String
     suspend fun getSubwayStations(lineName: String): List<Station>
     suspend fun getSubwayStationLastTime(
         stationId: String,
