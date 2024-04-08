@@ -9,7 +9,7 @@ data class BusStationsItem(
     val busRouteId: String,
     val busRouteNm: String,
     val direction: String,
-    val fullSectDist: String,
+    val fullSectDist: String?,
     val gpsX: String,
     val gpsY: String,
     val lastTm: String,
