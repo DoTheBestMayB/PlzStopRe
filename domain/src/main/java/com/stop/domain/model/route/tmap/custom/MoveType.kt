@@ -7,7 +7,7 @@ enum class MoveType {
         private const val NO_MATCHING_VALUE = "해당 변수 값이 없습니다."
 
         fun getMoveTypeByName(name: String): MoveType {
-            return values().firstOrNull {
+            return entries.firstOrNull {
                     it.name == name
                 } ?: throw IllegalArgumentException(NO_MATCHING_VALUE)
         }

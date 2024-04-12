@@ -20,12 +20,12 @@ internal interface OpenApiSeoulService {
         @Path("END_INDEX") endIndex: Int = 5,
     ): NetworkResult<SubwayStationResponse>
 
-    @GET("{KEY}/{TYPE}/{SERVICE}/{START_INDEX}/{END_INDEX}/%20/%20/{LINE_NAME}")
+    @GET("{KEY}/{TYPE}/{SERVICE}/{START_INDEX}/{END_INDEX}/%20/%20/%20/{LINE_NUM}")
     suspend fun getSubwayStations(
         @Path("KEY") key: String = BuildConfig.SUBWAY_KEY,
         @Path("TYPE") type: String = "json",
         @Path("SERVICE") serviceName: String,
-        @Path("LINE_NAME") lineName: String,
+        @Path("LINE_NUM") lineName: String,
         @Path("START_INDEX") startIndex: Int = 1,
         @Path("END_INDEX") endIndex: Int = 200,
     ): NetworkResult<SubwayStationsResponse>

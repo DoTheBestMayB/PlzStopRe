@@ -5,6 +5,7 @@ plugins {
     id("kotlin-android")
     id("com.google.dagger.hilt.android")
     id("com.google.devtools.ksp")
+    id("kotlin-kapt")
 }
 
 val properties = Properties()
@@ -88,7 +89,7 @@ dependencies {
     implementation("com.tickaroo.tikxml:annotation:0.8.13")
     implementation("com.tickaroo.tikxml:core:0.8.13")
     implementation("com.tickaroo.tikxml:retrofit-converter:0.8.13")
-    ksp("com.tickaroo.tikxml:processor:0.8.13")
+    kapt("com.tickaroo.tikxml:processor:0.8.13")
 
     // Room
     implementation("androidx.room:room-runtime:2.6.1")

@@ -1,15 +1,9 @@
 package com.stop.domain.model.route.seoul.bus
 
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
-
-@JsonClass(generateAdapter = true)
 data class BusStationInfo(
-    val arsId: String,
-    @Json(name = "stNm")
+    val startTime: String,
+    val lastTime: String,
     val stationName: String,
-    @Json(name = "tmX")
-    val longitude: String,
-    @Json(name = "tmY")
-    val latitude: String,
+    val stationId: String, // 정류소 고유 ID station
+    val stationNumber: String, // 정류소 번호 stationNo
 )

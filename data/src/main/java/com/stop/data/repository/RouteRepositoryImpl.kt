@@ -1,6 +1,7 @@
 package com.stop.data.repository
 
 import com.squareup.moshi.JsonDataException
+import com.stop.domain.model.route.seoul.subway.StationType
 import com.stop.data.remote.source.route.RouteRemoteDataSource
 import com.stop.domain.model.geoLocation.AddressType
 import com.stop.domain.model.nowlocation.SubwayRouteLocationUseCaseItem
@@ -36,9 +37,9 @@ internal class RouteRepositoryImpl @Inject constructor(
         return remoteDataSource.reverseGeocoding(coordinate, addressType)
     }
 
-    override suspend fun getSubwayStationCd(stationId: String, stationName: String): String {
+    override suspend fun getSubwayStationCd(stationType: StationType, stationName: String): String {
         return try {
-            remoteDataSource.getSubwayStationCd(stationId, stationName)
+            remoteDataSource.getSubwayStationCd(stationType, stationName)
         } catch (exception: JsonDataException) {
             ""
         } catch (exception: IllegalArgumentException) {
@@ -92,7 +93,7 @@ internal class RouteRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getSeoulBusStationArsId(stationName: String): List<BusStationInfo> {
+    override suspend fun getSeoulBusStationArsId(stationName: String): List<SeoulBusStationInfo> {
         return  try {
             remoteDataSource.getSeoulBusStationArsId(stationName)
         } catch (exception: JsonDataException) {
@@ -100,7 +101,7 @@ internal class RouteRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getSeoulBusRoute(stationId: String): List<BusRouteInfo> {
+    override suspend fun getSeoulBusRoute(stationId: String): List<SeoulBusRouteInfo> {
         return try {
             remoteDataSource.getSeoulBusRoute(stationId)
         } catch (exception: JsonDataException) {
@@ -146,5 +147,13 @@ internal class RouteRepositoryImpl @Inject constructor(
         } catch (exception: NullPointerException) {
             listOf()
         }
+    }
+
+    override suspend fun getBusRouteInfo(routeName: String): List<BusRouteInfo> {
+        return remoteDataSource.getBusRouteList(routeName)
+    }
+
+    override suspend fun getSeoulBusStations(routeId: String): List<BusStationInfo> {
+        return remoteDataSource.getBusStations(routeId)
     }
 }

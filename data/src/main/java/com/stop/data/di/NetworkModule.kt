@@ -15,8 +15,11 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.Interceptor
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
+import okhttp3.Protocol
 import okhttp3.Response
+import okhttp3.ResponseBody.Companion.toResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -164,6 +167,19 @@ internal object NetworkModule {
             val url = chain.request().url.toUri().toString()
 
             val (name: String, key: String) = when {
+//                url.contains("transit/routes") -> {
+//                    val response = readJson("response.json")
+//                    return chain.proceed(chain.request())
+//                        .newBuilder()
+//                        .code(200)
+//                        .protocol(Protocol.HTTP_2)
+//                        .message("success")
+//                        .body(
+//                            response.toByteArray()
+//                                .toResponseBody("application/json".toMediaTypeOrNull())
+//                        ).addHeader("content-type", "application/json")
+//                        .build()
+//                }
                 url.contains(BuildConfig.OPEN_API_SEOUL_URL) -> Pair(
                     OPEN_API_SEOUL_KEY_NAME,
                     BuildConfig.BUS_KEY
@@ -189,6 +205,10 @@ internal object NetworkModule {
                     .build()
                 proceed(newRequest)
             }
+        }
+        private fun readJson(fileName: String): String {
+            return Thread.currentThread().contextClassLoader?.getResource(fileName)
+                ?.readText() ?: ""
         }
     }
 }
