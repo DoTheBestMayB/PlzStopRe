@@ -1,9 +1,9 @@
 package com.stop.ui.route
 
-import com.stop.domain.model.route.tmap.custom.Itinerary
+import com.stop.model.route.ItineraryInfo
 
 interface OnItineraryClickListener {
 
-    fun onItineraryClick(itinerary: Itinerary)
+    fun onItineraryClick(itineraryInfo: ItineraryInfo)
 
 }

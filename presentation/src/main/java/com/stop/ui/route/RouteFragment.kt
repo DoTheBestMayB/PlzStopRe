@@ -17,7 +17,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.navigation.navGraphViewModels
 import com.stop.R
 import com.stop.databinding.FragmentRouteBinding
-import com.stop.domain.model.route.tmap.custom.Itinerary
+import com.stop.model.route.ItineraryInfo
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -103,10 +103,9 @@ class RouteFragment : Fragment() {
 
     private fun setRecyclerView() {
         adapter = RouteAdapter(object : OnItineraryClickListener {
-            override fun onItineraryClick(itinerary: Itinerary) {
+            override fun onItineraryClick(itineraryInfo: ItineraryInfo) {
                 alertDialog.show()
-                routeViewModel.calculateLastTransportTime(itinerary)
-                routeResultViewModel.setItineraries(itinerary)
+                routeViewModel.calculateLastTransportTime(itineraryInfo)
             }
         })
         binding.recyclerviewRoute.adapter = adapter
@@ -160,11 +159,17 @@ class RouteFragment : Fragment() {
             }
             binding.textViewOrigin.setTextColor(ContextCompat.getColor(this.requireContext(), R.color.main_dark_grey))
         }
-        routeViewModel.routeResponse.observe(viewLifecycleOwner) {
-            if (it == null) {
-                return@observe
-            }
+//        routeViewModel.routeResponse.observe(viewLifecycleOwner) {
+//            if (it == null) {
+//                return@observe
+//            }
+//            adapter.submitList(it)
+//        }
+        routeViewModel.itineraryInfo.observe(viewLifecycleOwner) {
             adapter.submitList(it)
+        }
+        routeViewModel.selectedItinerary.observe(viewLifecycleOwner) {
+            routeResultViewModel.setItineraries(it)
         }
 
         routeViewModel.errorMessage.observe(viewLifecycleOwner) {
