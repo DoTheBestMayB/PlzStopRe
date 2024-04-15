@@ -34,6 +34,11 @@ class RouteAdapter(
         holder.bind(getItem(position))
     }
 
+    override fun onViewRecycled(holder: RouteViewHolder) {
+        holder.recycle()
+    }
+
+
     companion object {
         private val diffUtil = object : DiffUtil.ItemCallback<ItineraryInfo>() {
             override fun areItemsTheSame(

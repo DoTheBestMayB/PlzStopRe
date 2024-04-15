@@ -25,4 +25,9 @@ class RouteViewHolder(
         binding.stationContainer.submitList(itineraryInfo.routeInfo)
         binding.timeLineContainer.submitList(itineraryInfo.routeInfo)
     }
+
+    fun recycle() {
+        binding.timeLineContainer.doRecycle()
+        binding.stationContainer.doRecycle()
+    }
 }

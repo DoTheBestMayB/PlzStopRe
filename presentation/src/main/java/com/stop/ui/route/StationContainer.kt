@@ -16,29 +16,35 @@ class StationContainer(
 ) : ConstraintLayout(context, attrs) {
 
     private var beforeViewId: Int? = null
+    private val bindings = mutableListOf<ItemRouteStationBinding>()
+
+    fun doRecycle() {
+        beforeViewId = null
+        for (binding in bindings) {
+            StationViewPool.putRecycledView(binding)
+            removeView(binding.root)
+        }
+        bindings.clear()
+    }
 
     fun submitList(routeInfoList: List<RouteInfo>) {
-        clearBeforeData()
         routeInfoList.forEachIndexed { index, routeInfo ->
             if (routeInfo.stationName == "출발지") {
                 return@forEachIndexed
             }
-            val binding = ItemRouteStationBinding.inflate(
+            val binding = StationViewPool.getRecycledView() ?: ItemRouteStationBinding.inflate(
                 LayoutInflater.from(context),
                 this,
-                true,
+                false,
             ).apply {
                 root.id = View.generateViewId()
             }
 
+            addView(binding.root)
+            bindings.add(binding)
             setBindingAttribute(binding, routeInfo, index)
             setConstraint(binding)
         }
-    }
-
-    private fun clearBeforeData() {
-        removeAllViewsInLayout()
-        beforeViewId = null
     }
 
     private fun setBindingAttribute(
