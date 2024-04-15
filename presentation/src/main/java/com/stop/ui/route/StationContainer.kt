@@ -7,10 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
-import androidx.core.content.ContextCompat
-import androidx.core.widget.ImageViewCompat
-import com.stop.databinding.ItemStationContainerBinding
-import com.stop.model.route.RouteItem
+import com.stop.databinding.ItemRouteStationBinding
+import com.stop.model.route.RouteInfo
 
 class StationContainer(
     context: Context,
@@ -19,10 +17,13 @@ class StationContainer(
 
     private var beforeViewId: Int? = null
 
-    fun submitList(routeItems: List<RouteItem>) {
+    fun submitList(routeInfoList: List<RouteInfo>) {
         clearBeforeData()
-        routeItems.forEachIndexed { index, routeItem ->
-            val stationContainerItemBinding = ItemStationContainerBinding.inflate(
+        routeInfoList.forEachIndexed { index, routeInfo ->
+            if (routeInfo.stationName == "출발지") {
+                return@forEachIndexed
+            }
+            val binding = ItemRouteStationBinding.inflate(
                 LayoutInflater.from(context),
                 this,
                 true,
@@ -30,41 +31,40 @@ class StationContainer(
                 root.id = View.generateViewId()
             }
 
-            setBindingAttribute(stationContainerItemBinding, routeItem, index)
-            setConstraint(stationContainerItemBinding)
+            setBindingAttribute(binding, routeInfo, index)
+            setConstraint(binding)
         }
     }
 
     private fun clearBeforeData() {
+        removeAllViewsInLayout()
         beforeViewId = null
     }
 
     private fun setBindingAttribute(
-        binding: ItemStationContainerBinding,
-        routeItem: RouteItem,
+        binding: ItemRouteStationBinding,
+        routeInfo: RouteInfo,
         index: Int
     ) {
-        binding.textViewTypeName.text = routeItem.typeName
-        binding.textViewName.text = routeItem.name
-        binding.viewBeforeLine.setBackgroundColor(routeItem.beforeColor)
-        binding.viewCurrentLine.setBackgroundColor(routeItem.currentColor)
-        ImageViewCompat.setImageTintList(binding.imageViewCurrentLine, ColorStateList.valueOf(routeItem.currentColor))
-        binding.imageViewMode.setImageResource(routeItem.mode)
+        binding.tvTypeName.text = routeInfo.typeName
+        binding.tvLocation.text = routeInfo.stationName
+        binding.ivTypeIcon.imageTintList = ColorStateList.valueOf(routeInfo.symbolColor)
+        binding.tvTypeName.setTextColor(routeInfo.symbolColor)
+        binding.ivTypeIcon.setImageResource(routeInfo.symbolDrawableId)
 
-        if (routeItem.typeName == "하차") {
-            binding.viewLine.visibility = View.GONE
-            binding.viewCurrentLine.visibility = View.GONE
+        if (routeInfo.typeName == "하차") {
+            binding.vBottomVerticalLine.visibility = View.GONE
         } else {
-            binding.viewLine.visibility = View.VISIBLE
-            binding.viewCurrentLine.visibility = View.VISIBLE
+            binding.vBottomVerticalLine.visibility = View.VISIBLE
         }
 
-        if (index == 0) {
-            binding.viewBeforeLine.visibility = View.INVISIBLE
+        if (index == 1) {
+            binding.vTopVerticalLine.visibility = View.INVISIBLE
         }
+
     }
 
-    private fun setConstraint(binding: ItemStationContainerBinding) {
+    private fun setConstraint(binding: ItemRouteStationBinding) {
         val endId = beforeViewId ?: this.id
         val endSide = if (beforeViewId == null) {
             ConstraintSet.TOP

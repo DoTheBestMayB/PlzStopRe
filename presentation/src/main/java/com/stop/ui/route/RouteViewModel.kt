@@ -1,18 +1,26 @@
 package com.stop.ui.route
 
+import android.graphics.Color
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.stop.R
 import com.stop.domain.model.route.TransportLastTime
 import com.stop.domain.model.route.tmap.RouteRequest
-import com.stop.domain.model.route.tmap.custom.*
+import com.stop.domain.model.route.tmap.custom.Itinerary
+import com.stop.domain.model.route.tmap.custom.MoveType
+import com.stop.domain.model.route.tmap.custom.Route
+import com.stop.domain.model.route.tmap.custom.TransportRoute
+import com.stop.domain.model.route.tmap.custom.WalkRoute
 import com.stop.domain.usecase.route.GetLastTransportTimeUseCase
 import com.stop.domain.usecase.route.GetRouteUseCase
 import com.stop.model.ErrorType
 import com.stop.model.Event
+import com.stop.model.route.ItineraryInfo
 import com.stop.model.route.Place
+import com.stop.model.route.RouteInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
@@ -39,6 +47,14 @@ class RouteViewModel @Inject constructor(
     val routeResponse: LiveData<List<Itinerary>>
         get() = _routeResponse
 
+    private val _itineraryInfo = MutableLiveData<List<ItineraryInfo>>()
+    val itineraryInfo: LiveData<List<ItineraryInfo>>
+        get() = _itineraryInfo
+
+    private val _selectedItinerary = MutableLiveData<Itinerary>()
+    val selectedItinerary: LiveData<Itinerary>
+        get() = _selectedItinerary
+
     private val _lastTimeResponse = MutableLiveData<Event<List<TransportLastTime?>>>()
     val lastTimeResponse: LiveData<Event<List<TransportLastTime?>>>
         get() = _lastTimeResponse
@@ -59,7 +75,7 @@ class RouteViewModel @Inject constructor(
             is SocketTimeoutException -> Event(ErrorType.SOCKET_TIMEOUT_EXCEPTION)
             is UnknownHostException -> Event(ErrorType.UNKNOWN_HOST_EXCEPTION)
             else -> Event(ErrorType.UNKNOWN_EXCEPTION)
-        }
+         }
         _errorMessage.postValue(errorMessage)
         _isLoading.postValue(Event(false))
     }
@@ -94,11 +110,90 @@ class RouteViewModel @Inject constructor(
             if (itineraries.isEmpty()) {
                 _errorMessage.postValue(Event(ErrorType.NO_ROUTE_RESULT))
                 _routeResponse.postValue(listOf())
+                _itineraryInfo.postValue(listOf())
                 _isLoading.postValue(Event(false))
                 return@launch
             }
-            this@RouteViewModel._routeResponse.postValue(itineraries)
+            _routeResponse.postValue(itineraries)
+            createItineraryInfo(itineraries)
             _isLoading.postValue(Event(false))
+        }
+    }
+
+    private fun createItineraryInfo(itineraries: List<Itinerary>) {
+        _itineraryInfo.postValue(itineraries.map { itinerary ->
+            val hour = itinerary.totalTime / 60 / 60
+            val minute = itinerary.totalTime / 60 % 60
+            ItineraryInfo(
+                itinerary.totalDistance,
+                minute,
+                hour,
+                createRouteInfo(itinerary.routes)
+            )
+        })
+    }
+
+    private fun createRouteInfo(routes: List<Route>): List<RouteInfo> {
+        val routeInfo = mutableListOf<RouteInfo>()
+
+        for ((index, route) in routes.withIndex()) {
+            if (route.mode == MoveType.TRANSFER) {
+                continue
+            }
+            val (typeName, symbolResId) = if (index == routes.size - 1) {
+                "하차" to R.drawable.ic_star_white
+            } else {
+                getTypeName(route) to getRouteItemMode(route)
+            }
+
+            routeInfo.add(
+                RouteInfo(
+                    route.mode,
+                    route.sectionTime,
+                    route.proportionOfSectionTime,
+                    typeName,
+                    route.start.name,
+                    getRouteItemColor(route),
+                    symbolResId
+                )
+            )
+        }
+        return routeInfo
+    }
+
+    private val walkColor = Color.parseColor("#E2E7EE")
+    private val elseColor = Color.parseColor("#EEEEEE")
+
+    private fun getRouteItemColor(route: Route): Int {
+        return when (route) {
+            is TransportRoute -> Color.parseColor("#${route.routeColor}")
+            is WalkRoute -> walkColor
+            else -> elseColor
+        }
+    }
+
+    private fun getRouteItemMode(route: Route): Int {
+        return when (route.mode) {
+            MoveType.WALK, MoveType.TRANSFER -> R.drawable.ic_walk_white
+            MoveType.BUS -> R.drawable.ic_bus_white
+            MoveType.SUBWAY -> R.drawable.ic_subway_white
+            else -> R.drawable.ic_star_white
+        }
+    }
+
+    private fun getTypeName(route: Route): String {
+        return when (route) {
+            is WalkRoute -> "도보"
+            is TransportRoute -> getSubwayTypeName(route)
+            else -> ""
+        }
+    }
+
+    private fun getSubwayTypeName(route: TransportRoute): String {
+        return when (route.mode) {
+            MoveType.SUBWAY -> route.routeInfo.replace("수도권", "")
+            MoveType.BUS -> route.routeInfo.split(":")[1]
+            else -> route.routeInfo
         }
     }
 
@@ -109,10 +204,20 @@ class RouteViewModel @Inject constructor(
         patchRoute(false)
     }
 
-    fun calculateLastTransportTime(itinerary: Itinerary) {
+    fun calculateLastTransportTime(itineraryInfo: ItineraryInfo) {
+        val itinerary =
+            _routeResponse.value?.first { it.totalDistance == itineraryInfo.totalDistance }
+                ?: throw IllegalArgumentException()
+        _selectedItinerary.value = itinerary
         checkClickedItinerary(itinerary)
         viewModelScope.launch(Dispatchers.Default + coroutineExceptionHandler) {
-            this@RouteViewModel._lastTimeResponse.postValue(Event(getLastTransportTimeUseCase(itinerary)))
+            this@RouteViewModel._lastTimeResponse.postValue(
+                Event(
+                    getLastTransportTimeUseCase(
+                        itinerary
+                    )
+                )
+            )
         }
     }
 

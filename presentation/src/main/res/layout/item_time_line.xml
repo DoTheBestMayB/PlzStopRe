@@ -12,6 +12,7 @@
         android:background="@drawable/time_stick_border"
         android:gravity="center"
         android:textSize="11sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@id/dummy_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@id/dummy_view"

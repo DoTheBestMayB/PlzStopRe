@@ -6,11 +6,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.stop.databinding.ItemRouteBinding
-import com.stop.domain.model.route.tmap.custom.Itinerary
+import com.stop.model.route.ItineraryInfo
 
 class RouteAdapter(
     private val onItineraryClickListener: OnItineraryClickListener
-) : ListAdapter<Itinerary, RouteViewHolder>(diffUtil) {
+) : ListAdapter<ItineraryInfo, RouteViewHolder>(diffUtil) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RouteViewHolder {
         val binding = ItemRouteBinding.inflate(
@@ -35,17 +35,17 @@ class RouteAdapter(
     }
 
     companion object {
-        private val diffUtil = object : DiffUtil.ItemCallback<Itinerary>() {
+        private val diffUtil = object : DiffUtil.ItemCallback<ItineraryInfo>() {
             override fun areItemsTheSame(
-                oldItinerary: Itinerary,
-                newItinerary: Itinerary
+                oldItinerary: ItineraryInfo,
+                newItinerary: ItineraryInfo
             ): Boolean {
                 return oldItinerary.totalDistance == newItinerary.totalDistance
             }
 
             override fun areContentsTheSame(
-                oldItinerary: Itinerary,
-                newItinerary: Itinerary
+                oldItinerary: ItineraryInfo,
+                newItinerary: ItineraryInfo
             ): Boolean {
                 return oldItinerary == newItinerary
             }

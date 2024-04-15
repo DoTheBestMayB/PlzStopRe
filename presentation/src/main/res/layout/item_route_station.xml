@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <View
+        android:id="@+id/v_top_vertical_line"
+        android:layout_width="2dp"
+        android:layout_height="12dp"
+        android:background="@color/station_line_color"
+        app:layout_constraintBottom_toTopOf="@id/iv_type_icon"
+        app:layout_constraintEnd_toEndOf="@id/iv_type_icon"
+        app:layout_constraintStart_toStartOf="@id/iv_type_icon"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/iv_type_icon"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_marginStart="12dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/v_top_vertical_line"
+        tools:src="@drawable/time_line_subway_16"
+        tools:tint="@color/blue" />
+
+    <View
+        android:id="@+id/v_Bottom_vertical_line"
+        android:layout_width="2dp"
+        android:layout_height="12dp"
+        android:background="@color/station_line_color"
+        app:layout_constraintEnd_toEndOf="@id/iv_type_icon"
+        app:layout_constraintStart_toStartOf="@id/iv_type_icon"
+        app:layout_constraintTop_toBottomOf="@id/iv_type_icon" />
+
+    <TextView
+        android:id="@+id/tv_type_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:minEms="4"
+        app:layout_constraintBottom_toBottomOf="@id/iv_type_icon"
+        app:layout_constraintStart_toEndOf="@id/iv_type_icon"
+        app:layout_constraintTop_toTopOf="@id/iv_type_icon"
+        tools:text="1호선"
+        tools:textColor="@color/blue" />
+
+    <TextView
+        android:id="@+id/tv_location"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:gravity="start"
+        app:layout_constraintBottom_toBottomOf="@id/iv_type_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/tv_type_name"
+        app:layout_constraintTop_toTopOf="@id/iv_type_icon"
+        tools:text="노량진역" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

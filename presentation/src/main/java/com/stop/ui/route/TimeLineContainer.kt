@@ -12,8 +12,7 @@ import androidx.core.content.ContextCompat
 import com.stop.R
 import com.stop.databinding.ItemTimeLineBinding
 import com.stop.domain.model.route.tmap.custom.MoveType
-import com.stop.domain.model.route.tmap.custom.Route
-import com.stop.domain.model.route.tmap.custom.TransportRoute
+import com.stop.model.route.RouteInfo
 import kotlin.properties.Delegates
 
 class TimeLineContainer(
@@ -21,7 +20,7 @@ class TimeLineContainer(
     attrs: AttributeSet? = null,
 ) : ConstraintLayout(context, attrs) {
 
-    private val greyColor = ContextCompat.getColor(context, R.color.grey_for_route_walk)
+    private val walkColor = ContextCompat.getColor(context, R.color.grey_for_route_walk)
     private val density = context.resources.displayMetrics.density
 
     private var beforeViewId: Int? = null
@@ -29,7 +28,7 @@ class TimeLineContainer(
     private var routeCount by Delegates.notNull<Int>()
     private var overlappingWidth by Delegates.notNull<Int>()
 
-    fun submitList(routes: List<Route>) {
+    fun submitList(routes: List<RouteInfo>) {
         clearBeforeData()
 
         routeCount = routes.size
@@ -56,11 +55,12 @@ class TimeLineContainer(
     }
 
     private fun clearBeforeData() {
+        removeAllViewsInLayout()
         beforeViewId = null
         beforeView = null
     }
 
-    private fun setBindingAttribute(binding: ItemTimeLineBinding, route: Route, index: Int) {
+    private fun setBindingAttribute(binding: ItemTimeLineBinding, route: RouteInfo, index: Int) {
         val filterTime = if (routeCount < 7) {
             60.0
         } else {
@@ -87,7 +87,7 @@ class TimeLineContainer(
             MoveType.SUBWAY -> R.drawable.time_line_subway_16
             MoveType.WALK, MoveType.TRANSFER -> {
                 if (index != 0) {
-                    setDefaultColor(binding)
+                    setIdentityColor(binding, route)
                     binding.viewIcon.visibility = View.GONE
                     binding.imageViewIcon.visibility = View.GONE
                     setConstraint(binding, index, route.proportionOfSectionTime, correctionValue)
@@ -109,11 +109,7 @@ class TimeLineContainer(
 
         binding.imageViewIcon.setImageDrawable(drawable)
 
-        when (route) {
-            is TransportRoute -> setIdentityColor(binding, route)
-            else -> setDefaultColor(binding)
-        }
-
+        setIdentityColor(binding, route)
         setConstraint(binding, index, route.proportionOfSectionTime, correctionValue)
     }
 
@@ -169,22 +165,17 @@ class TimeLineContainer(
         beforeViewId = binding.root.id
     }
 
-    private fun setIdentityColor(binding: ItemTimeLineBinding, route: TransportRoute) {
-        val identityColor = Color.parseColor("#${route.routeColor}")
+    private fun setIdentityColor(binding: ItemTimeLineBinding, route: RouteInfo) {
+        val color = if (route.mode == MoveType.WALK) {
+            walkColor
+        } else {
+            Color.WHITE
+        }
+        binding.textViewSectionTime.background.setTint(route.symbolColor)
+        binding.textViewSectionTime.setTextColor(color)
 
-        binding.textViewSectionTime.background.setTint(identityColor)
-        binding.textViewSectionTime.setTextColor(Color.WHITE)
-
-        binding.viewIcon.background.setTint(identityColor)
-        binding.imageViewIcon.imageTintList = ColorStateList.valueOf(Color.WHITE)
-    }
-
-    private fun setDefaultColor(binding: ItemTimeLineBinding) {
-        binding.textViewSectionTime.background.setTint(greyColor)
-        binding.textViewSectionTime.setTextColor(Color.WHITE)
-
-        binding.viewIcon.background.setTint(greyColor)
-        binding.imageViewIcon.imageTintList = ColorStateList.valueOf(Color.WHITE)
+        binding.viewIcon.background.setTint(route.symbolColor)
+        binding.imageViewIcon.imageTintList = ColorStateList.valueOf(color)
     }
 
     companion object {

@@ -29,7 +29,7 @@
         android:minEms="4"
         android:textColor="@color/main_light_grey"
         android:textSize="13sp"
-        app:layout_constraintBottom_toTopOf="@id/view_line"
+        app:layout_constraintBottom_toTopOf="@id/v_line"
         app:layout_constraintStart_toEndOf="@id/image_view_current_line"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="에버라인" />
@@ -45,7 +45,7 @@
         android:maxEms="12"
         android:textColor="@color/main_dark_grey"
         android:textSize="15sp"
-        app:layout_constraintBottom_toTopOf="@id/view_line"
+        app:layout_constraintBottom_toTopOf="@id/v_line"
         app:layout_constraintStart_toEndOf="@id/text_view_type_name"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="미금역.청솔마을.2001.아울렛123123" />
@@ -104,7 +104,7 @@
         tools:src="@drawable/ic_walk_white" />
 
     <View
-        android:id="@+id/view_line"
+        android:id="@+id/v_line"
         android:layout_width="0dp"
         android:layout_height="1dp"
         android:layout_marginStart="-15dp"

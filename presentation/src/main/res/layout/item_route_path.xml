@@ -118,7 +118,7 @@
         tools:src="@drawable/ic_walk_white" />
 
     <View
-        android:id="@+id/view_line"
+        android:id="@+id/v_line"
         android:layout_width="0dp"
         android:layout_height="1dp"
         android:layout_marginStart="15dp"

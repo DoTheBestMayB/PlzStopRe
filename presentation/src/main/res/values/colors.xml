@@ -7,8 +7,10 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="grey_for_route_walk">#C0C5CA</color>
+    <color name="grey_for_route_walk">#6A6F7A</color>
 
+    <color name="station_line_color">#E5EAF1</color>
+    <color name="walk_color">#E2E7EE</color>
     <color name="light_grey">#D3CCCC</color>
     <color name="gray_d9">#D9D9D9</color>
     <color name="main_dark_grey">#404550</color>
@@ -19,7 +21,7 @@
     <color name="main_yellow">#FFC766</color>
     <color name="transparent">#00FFFFFF</color>
     <color name="hint_text_color">#808590</color>
-    <color name="blue">#2196F3</color>
+    <color name="blue">#0000FF</color>
     <color name="red">#F44336</color>
     <color name="light_yellow">#FDDCA4</color>
     <color name="mint">#5DC19B</color>
