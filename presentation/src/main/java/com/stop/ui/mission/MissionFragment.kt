@@ -1,10 +1,10 @@
 package com.stop.ui.mission
 
-import android.Manifest
 import android.animation.Animator
-import android.app.AlertDialog
-import android.content.*
-import android.content.pm.PackageManager
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,8 +12,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -25,21 +23,23 @@ import com.stop.R
 import com.stop.databinding.FragmentMissionBinding
 import com.stop.domain.model.route.tmap.custom.Place
 import com.stop.domain.model.route.tmap.custom.WalkRoute
-import com.stop.util.isMoreThanOreo
-import com.stop.util.isMoreThanQ
 import com.stop.model.alarm.AlarmStatus
 import com.stop.model.map.Location
 import com.stop.model.mission.MissionStatus
+import com.stop.permission.PermissionManager
 import com.stop.ui.alarmsetting.AlarmSettingViewModel
 import com.stop.ui.mission.MissionService.Companion.MISSION_LAST_TIME
 import com.stop.ui.mission.MissionService.Companion.MISSION_LOCATIONS
 import com.stop.ui.mission.MissionService.Companion.MISSION_OVER
 import com.stop.ui.mission.MissionService.Companion.MISSION_TIME_OVER
+import com.stop.ui.tmap.MissionTMap
+import com.stop.ui.tmap.TMapHandler
 import com.stop.ui.util.Marker
+import com.stop.util.isMoreThanOreo
 import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.launch
 
-class MissionFragment : Fragment(), MissionHandler {
+class MissionFragment : Fragment() {
 
     private var _binding: FragmentMissionBinding? = null
     private val binding: FragmentMissionBinding
@@ -53,6 +53,32 @@ class MissionFragment : Fragment(), MissionHandler {
     private lateinit var backPressedCallback: OnBackPressedCallback
     private lateinit var userInfoReceiver: BroadcastReceiver
     private lateinit var timeReceiver: BroadcastReceiver
+
+    private val permissionManager = PermissionManager(this)
+
+    private val mapHandler = object : TMapHandler {
+        override fun alertTMapReady() {
+//            permissionManager.getLocationPermission(
+//                onGranted = ,
+//                isOkayPartialGranted = true,
+//                isShowDialog = true,
+//            )
+            getAlarmInfo()
+            alarmSettingViewModel.alarmStatus.value = AlarmStatus.MISSION
+            drawPersonLine()
+            setOnEnableScrollWithZoomLevelListener()
+        }
+
+        override fun setOnLocationChangeListener(location: android.location.Location) {
+        }
+
+        override fun setOnDisableScrollWIthZoomLevelListener() {
+        }
+
+        override fun setPanel(tMapPoint: TMapPoint, isClickedFromPlaceSearch: Boolean) {
+        }
+
+    }
 
     var personCurrentLocation = Location(37.553836, 126.969652)
     var firstTime = 0
@@ -171,7 +197,7 @@ class MissionFragment : Fragment(), MissionHandler {
         setTimer()
         initTMap()
         setMissionOver()
-        checkLocationPermission()
+        requestLocationPermission(false)
         setObserve()
         setListener()
     }
@@ -202,7 +228,10 @@ class MissionFragment : Fragment(), MissionHandler {
     }
 
     private fun setTimer() {
-        missionServiceIntent.putExtra(MISSION_LAST_TIME, alarmSettingViewModel.alarmItem.value?.lastTime)
+        missionServiceIntent.putExtra(
+            MISSION_LAST_TIME,
+            alarmSettingViewModel.alarmItem.value?.lastTime
+        )
         if (isMoreThanOreo()) {
             requireActivity().startForegroundService(missionServiceIntent)
         } else {
@@ -213,8 +242,7 @@ class MissionFragment : Fragment(), MissionHandler {
     }
 
     private fun initTMap() {
-        tMap = MissionTMap(requireActivity(), this)
-        tMap.init()
+        tMap = MissionTMap(requireActivity(), mapHandler)
 
         binding.constraintLayoutContainer.addView(tMap.tMapView)
     }
@@ -249,16 +277,15 @@ class MissionFragment : Fragment(), MissionHandler {
         }
     }
 
-    private fun checkLocationPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            if (PackageManager.PERMISSION_GRANTED != ContextCompat.checkSelfPermission(
-                    requireActivity(),
-                    Manifest.permission.ACCESS_BACKGROUND_LOCATION
-                )
-            ) {
-                setPermissionDialog(requireActivity())
-            }
-        }
+    private fun requestLocationPermission(
+        isShowDialog: Boolean = false,
+        onGranted: (() -> Unit) = { }
+    ) {
+        permissionManager.getLocationPermission(
+            onGranted = onGranted,
+            isOkayPartialGranted = true,
+            isShowDialog = isShowDialog,
+        )
     }
 
     fun setCompassMode() {
@@ -266,14 +293,16 @@ class MissionFragment : Fragment(), MissionHandler {
     }
 
     fun setPersonCurrent() {
-        tMap.tMapView.setCenterPoint(
-            personCurrentLocation.latitude,
-            personCurrentLocation.longitude,
-            true
-        )
+        requestLocationPermission(true) {
+            tMap.tMapView.setCenterPoint(
+                personCurrentLocation.latitude,
+                personCurrentLocation.longitude,
+                true
+            )
 
-        tMap.isTracking = true
-        tMap.tMapView.zoomLevel = 16
+            tMap.isTracking = true
+            tMap.tMapView.zoomLevel = 16
+        }
     }
 
     fun setZoomOut() {
@@ -298,14 +327,7 @@ class MissionFragment : Fragment(), MissionHandler {
         missionViewModel.missionStatus.value = MissionStatus.OVER
     }
 
-    override fun alertTMapReady() {
-        requestPermissionsLauncher.launch(PERMISSIONS)
-        getAlarmInfo()
-        alarmSettingViewModel.alarmStatus.value = AlarmStatus.MISSION
-        drawPersonLine()
-    }
-
-    override fun setOnEnableScrollWithZoomLevelListener() {
+    private fun setOnEnableScrollWithZoomLevelListener() {
         tMap.apply {
             tMapView.setOnEnableScrollWithZoomLevelListener { _, _ ->
                 isTracking = false
@@ -322,20 +344,17 @@ class MissionFragment : Fragment(), MissionHandler {
     }
 
     private fun drawPersonLine() {
-        lateinit var beforeLocation: Location
+        var beforeLocation: Location? = null
         viewLifecycleOwner.lifecycleScope.launch {
             missionViewModel.userLocations.collectIndexed { index, userLocation ->
                 if (userLocation.isEmpty()) {
                     return@collectIndexed
                 }
                 val location = userLocation.last()
-                if (index == 0) {
-                    initMarker(userLocation)
-                    beforeLocation = location
-                } else if (index >= 1 && userLocation.isNotEmpty()) {
+                beforeLocation?.let {
                     drawNowLocationLine(
                         TMapPoint(location.latitude, location.longitude),
-                        TMapPoint(beforeLocation.latitude, beforeLocation.longitude)
+                        TMapPoint(it.latitude, it.longitude)
                     )
                     personCurrentLocation = location
                     if (tMap.isTracking) {
@@ -346,6 +365,9 @@ class MissionFragment : Fragment(), MissionHandler {
                     }
                     beforeLocation = location
                     arriveDestination(location.latitude, location.longitude)
+                } ?: run {
+                    initMarker(userLocation)
+                    beforeLocation = location
                 }
             }
         }
@@ -448,35 +470,6 @@ class MissionFragment : Fragment(), MissionHandler {
         }
     }
 
-    private fun setPermissionDialog(context: Context) {
-        if (isMoreThanQ()) {
-            val builder = AlertDialog.Builder(context)
-            builder.setTitle("백그라운드 위치 권한을 위해 항상 허용으로 설정해주세요.")
-
-            val listener = DialogInterface.OnClickListener { _, p1 ->
-                when (p1) {
-                    DialogInterface.BUTTON_POSITIVE ->
-                        setBackgroundPermission()
-                }
-            }
-            builder.setPositiveButton("네", listener)
-            builder.setNegativeButton("아니오", null)
-
-            builder.show()
-        }
-    }
-
-    private fun setBackgroundPermission() {
-        if (isMoreThanQ()) {
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                arrayOf(
-                    Manifest.permission.ACCESS_BACKGROUND_LOCATION,
-                ), 2
-            )
-        }
-    }
-
     override fun onDestroyView() {
         _binding = null
 
@@ -494,9 +487,6 @@ class MissionFragment : Fragment(), MissionHandler {
 
     companion object {
         private var PERSON_LINE_NUM = 0
-
-        private val PERMISSIONS =
-            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
     }
 
 }

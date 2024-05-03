@@ -1,6 +1,5 @@
 package com.stop.ui.map
 
-import android.Manifest.permission
 import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -11,7 +10,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -30,6 +28,7 @@ import com.stop.databinding.FragmentMapBinding
 import com.stop.model.alarm.AlarmStatus
 import com.stop.model.map.Location
 import com.stop.model.mission.MissionStatus
+import com.stop.permission.PermissionManager
 import com.stop.ui.alarmsetting.AlarmSettingFragment
 import com.stop.ui.alarmsetting.AlarmSettingFragment.Companion.ALARM_MAP_CODE
 import com.stop.ui.alarmsetting.AlarmSettingViewModel
@@ -37,10 +36,12 @@ import com.stop.ui.alarmstart.SoundService
 import com.stop.ui.mission.MissionService
 import com.stop.ui.mission.MissionViewModel
 import com.stop.ui.placesearch.PlaceSearchViewModel
+import com.stop.ui.tmap.MapTMap
+import com.stop.ui.tmap.TMapHandler
 import com.stop.ui.util.Marker
 import kotlinx.coroutines.launch
 
-class MapFragment : Fragment(), MapHandler {
+class MapFragment : Fragment() {
 
     private var _binding: FragmentMapBinding? = null
     private val binding: FragmentMapBinding
@@ -50,9 +51,48 @@ class MapFragment : Fragment(), MapHandler {
     private val placeSearchViewModel: PlaceSearchViewModel by activityViewModels()
     private val missionViewModel: MissionViewModel by viewModels()
 
+    private lateinit var permissionManager: PermissionManager
+    private val mapHandler = object : TMapHandler {
+        override fun alertTMapReady() {
+            requestLocationPermission()
+
+            tMap.initListener()
+            initAfterTMapReady()
+        }
+
+        override fun setOnLocationChangeListener(location: android.location.Location) {
+            placeSearchViewModel.currentLocation = Location(location.latitude, location.longitude)
+        }
+
+        override fun setOnDisableScrollWIthZoomLevelListener() {
+            if (binding.homePanel.layoutPanel.visibility == View.VISIBLE) {
+                binding.homePanel.layoutPanel.visibility = View.GONE
+                tMap.tMapView.removeTMapMarkerItem(Marker.PLACE_MARKER)
+            } else {
+                setViewVisibility()
+                mapUIVisibility = mapUIVisibility.xor(View.GONE)
+            }
+        }
+
+        override fun setPanel(tMapPoint: TMapPoint, isClickedFromPlaceSearch: Boolean) {
+            placeSearchViewModel.getGeoLocationInfo(
+                tMapPoint.latitude,
+                tMapPoint.longitude,
+                isClickedFromPlaceSearch
+            )
+        }
+    }
+
     private lateinit var missionServiceIntent: Intent
     private lateinit var tMap: MapTMap
     private var mapUIVisibility = View.GONE
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        tMap = MapTMap(requireActivity(), mapHandler)
+        permissionManager = PermissionManager(this)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -129,17 +169,8 @@ class MapFragment : Fragment(), MapHandler {
     }
 
     private fun initTMap() {
-        placeSearchViewModel.tMap?.let {
-            tMap = it
-            tMap.setHandler(this)
-            initAfterTMapReady()
-        } ?: run {
-            tMap = MapTMap(requireActivity(), this)
-            tMap.init()
-            placeSearchViewModel.tMap = tMap
-        }
-
         binding.layoutContainer.addView(tMap.tMapView)
+        initAfterTMapReady()
     }
 
     private fun initBottomSheetBehavior() {
@@ -224,11 +255,13 @@ class MapFragment : Fragment(), MapHandler {
         }
     }
 
-    override fun alertTMapReady() {
-        requestPermissionsLauncher.launch(PERMISSIONS)
-
-        tMap.initListener()
-        initAfterTMapReady()
+    private fun requestLocationPermission(isShowDialog: Boolean = false) {
+        val onGranted = tMap::setTrackingMode
+        permissionManager.getLocationPermission(
+            onGranted = onGranted,
+            isOkayPartialGranted = true,
+            isShowDialog = isShowDialog,
+        )
     }
 
     private fun initAfterTMapReady() {
@@ -244,7 +277,7 @@ class MapFragment : Fragment(), MapHandler {
         }
 
         binding.layoutCurrent.setOnClickListener {
-            requestPermissionsLauncher.launch(PERMISSIONS)
+            requestLocationPermission(isShowDialog = true)
 
             tMap.isTracking = true
             tMap.tMapView.setCenterPoint(
@@ -294,7 +327,7 @@ class MapFragment : Fragment(), MapHandler {
                     true
                 )
                 tMap.addMarker(Marker.PLACE_MARKER, Marker.PLACE_MARKER_IMG, clickTMapPoint)
-                setPanel(clickTMapPoint, true)
+                mapHandler.setPanel(clickTMapPoint, true)
             }
         }
     }
@@ -314,30 +347,8 @@ class MapFragment : Fragment(), MapHandler {
                         currentTMapPoint.longitude
                     )
                     tMap.addMarker(Marker.PLACE_MARKER, Marker.PLACE_MARKER_IMG, currentTMapPoint)
-                    setPanel(currentTMapPoint, false)
+                    mapHandler.setPanel(currentTMapPoint, false)
                 }
-        }
-    }
-
-    override fun setPanel(tMapPoint: TMapPoint, isClickedFromPlaceSearch: Boolean) {
-        placeSearchViewModel.getGeoLocationInfo(
-            tMapPoint.latitude,
-            tMapPoint.longitude,
-            isClickedFromPlaceSearch
-        )
-    }
-
-    override fun setOnLocationChangeListener(location: android.location.Location) {
-        placeSearchViewModel.currentLocation = Location(location.latitude, location.longitude)
-    }
-
-    override fun setOnDisableScrollWIthZoomLevelListener() {
-        if (binding.homePanel.layoutPanel.visibility == View.VISIBLE) {
-            binding.homePanel.layoutPanel.visibility = View.GONE
-            tMap.tMapView.removeTMapMarkerItem(Marker.PLACE_MARKER)
-        } else {
-            setViewVisibility()
-            mapUIVisibility = mapUIVisibility.xor(View.GONE)
         }
     }
 
@@ -375,14 +386,6 @@ class MapFragment : Fragment(), MapHandler {
         super.onDestroyView()
     }
 
-    private val requestPermissionsLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        if (permissions.entries.any { it.value }) {
-            tMap.setTrackingMode()
-        }
-    }
-
     fun setMissionStart() {
         Intent(requireContext(), AlarmActivity::class.java).apply {
             putExtra("MISSION_CODE", MissionService.MISSION_CODE)
@@ -391,10 +394,4 @@ class MapFragment : Fragment(), MapHandler {
             startActivity(this)
         }
     }
-
-    companion object {
-        private val PERMISSIONS =
-            arrayOf(permission.ACCESS_FINE_LOCATION, permission.ACCESS_COARSE_LOCATION)
-    }
-
 }

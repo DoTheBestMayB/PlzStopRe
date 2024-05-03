@@ -16,11 +16,14 @@ import com.stop.domain.usecase.nearplace.InsertRecentPlaceSearchUseCase
 import com.stop.model.Event
 import com.stop.model.map.Location
 import com.stop.model.route.Coordinate
-import com.stop.ui.map.MapTMap
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.math.round
@@ -64,12 +67,14 @@ class PlaceSearchViewModel @Inject constructor(
     val distance: LiveData<Float>
         get() = _distance
 
-    val recentPlaceSearch: StateFlow<List<PlaceUseCaseItem>> = getRecentPlaceSearchUseCase().stateIn(
-        scope = viewModelScope, started = SharingStarted.WhileSubscribed(), initialValue = emptyList()
-    )
+    val recentPlaceSearch: StateFlow<List<PlaceUseCaseItem>> =
+        getRecentPlaceSearchUseCase().stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(),
+            initialValue = emptyList()
+        )
 
     // 기본 주소로 서울역 주소 지정
-    var tMap: MapTMap? = null
     var currentLocation = Location(37.553836, 126.969652)
     var clickedPlaceName = ""
     var panelInfo: com.stop.model.route.Place? = null

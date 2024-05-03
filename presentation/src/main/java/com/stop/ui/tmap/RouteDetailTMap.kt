@@ -1,4 +1,4 @@
-package com.stop.ui.routedetail
+package com.stop.ui.tmap
 
 import android.content.Context
 import android.graphics.Color
@@ -6,14 +6,16 @@ import androidx.core.content.ContextCompat
 import com.skt.tmap.TMapPoint
 import com.skt.tmap.overlay.TMapPolyLine
 import com.stop.R
-import com.stop.domain.model.route.tmap.custom.*
+import com.stop.domain.model.route.tmap.custom.Coordinate
+import com.stop.domain.model.route.tmap.custom.Route
+import com.stop.domain.model.route.tmap.custom.TransportRoute
+import com.stop.domain.model.route.tmap.custom.WalkRoute
 import com.stop.ui.util.Marker
-import com.stop.ui.util.TMap
 
 class RouteDetailTMap(
     private val context: Context,
-    handler: RouteDetailHandler,
-) : TMap(context, handler) {
+    tMapHandler: TMapHandler,
+) : TMap(context, tMapHandler) {
 
     private var polyLine = TMapPolyLine()
 
@@ -92,7 +94,11 @@ class RouteDetailTMap(
     }
 
     fun setRouteItemFocus(coordinate: Coordinate) {
-        tMapView.setCenterPoint(coordinate.latitude.toDouble(), coordinate.longitude.toDouble(), true)
+        tMapView.setCenterPoint(
+            coordinate.latitude.toDouble(),
+            coordinate.longitude.toDouble(),
+            true
+        )
         tMapView.zoomLevel = 16
     }
 

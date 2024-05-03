@@ -1,4 +1,4 @@
-package com.stop.ui.map
+package com.stop.ui.tmap
 
 import android.content.Context
 import android.graphics.PointF
@@ -9,19 +9,14 @@ import com.skt.tmap.overlay.TMapMarkerItem
 import com.skt.tmap.poi.TMapPOIItem
 import com.stop.model.map.Location
 import com.stop.ui.util.Marker
-import com.stop.ui.util.TMap
 
 class MapTMap(
     context: Context,
-    private var handler: MapHandler,
+    private val handler: TMapHandler,
 ) : TMap(context, handler) {
 
     private val enablePoints = mutableSetOf<Location>()
     private var isLongClick = false
-
-    fun setHandler(handler: MapHandler) {
-        this.handler = handler
-    }
 
     fun initListener() {
         tMapView.setOnClickListenerCallback(onClickListenerCallback)

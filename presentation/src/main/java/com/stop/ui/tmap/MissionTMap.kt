@@ -1,15 +1,14 @@
-package com.stop.ui.mission
+package com.stop.ui.tmap
 
 import android.content.Context
 import androidx.core.content.ContextCompat
 import com.skt.tmap.TMapPoint
 import com.skt.tmap.overlay.TMapPolyLine
 import com.stop.domain.model.route.tmap.custom.WalkRoute
-import com.stop.ui.util.TMap
 
 class MissionTMap(
     private val context: Context,
-    handler: MissionHandler,
+    handler: TMapHandler,
 ) : TMap(context, handler) {
 
     fun drawMoveLine(nowLocation: TMapPoint, beforeLocation: TMapPoint, id: String, color: Int) {
@@ -18,7 +17,7 @@ class MissionTMap(
             lineColor = ContextCompat.getColor(context, color)
             outLineColor = ContextCompat.getColor(context, color)
         }
-        
+
         tMapView.addTMapPolyLine(polyLine)
     }
 

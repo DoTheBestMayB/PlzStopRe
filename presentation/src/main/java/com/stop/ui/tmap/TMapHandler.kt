@@ -1,9 +1,8 @@
-package com.stop.ui.map
+package com.stop.ui.tmap
 
 import com.skt.tmap.TMapPoint
-import com.stop.ui.util.Handler
 
-interface MapHandler : Handler {
+interface TMapHandler {
 
     fun alertTMapReady()
 
