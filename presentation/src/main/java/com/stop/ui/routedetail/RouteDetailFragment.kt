@@ -1,5 +1,6 @@
 package com.stop.ui.routedetail
 
+import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,21 +9,37 @@ import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
+import com.skt.tmap.TMapPoint
 import com.stop.R
 import com.stop.databinding.FragmentRouteDetailBinding
 import com.stop.domain.model.route.tmap.custom.Coordinate
 import com.stop.ui.route.RouteResultViewModel
+import com.stop.ui.tmap.RouteDetailTMap
+import com.stop.ui.tmap.TMapHandler
 import com.stop.ui.util.DrawerStringUtils
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class RouteDetailFragment : Fragment(), RouteDetailHandler {
+class RouteDetailFragment : Fragment() {
 
     private var _binding: FragmentRouteDetailBinding? = null
     private val binding: FragmentRouteDetailBinding
         get() = _binding!!
 
     private val routeResultViewModel: RouteResultViewModel by navGraphViewModels(R.id.route_nav_graph)
+    private val mapHandler = object : TMapHandler {
+        override fun alertTMapReady() {
+            routeResultViewModel.itinerary.value?.let {
+                tMap.drawRoutes(it.routes)
+            }
+        }
+
+        override fun setOnLocationChangeListener(location: Location) {}
+
+        override fun setOnDisableScrollWIthZoomLevelListener() {}
+
+        override fun setPanel(tMapPoint: TMapPoint, isClickedFromPlaceSearch: Boolean) {}
+    }
 
     private lateinit var tMap: RouteDetailTMap
 
@@ -45,8 +62,7 @@ class RouteDetailFragment : Fragment(), RouteDetailHandler {
     }
 
     private fun initTMap() {
-        tMap = RouteDetailTMap(requireActivity(), this)
-        tMap.init()
+        tMap = RouteDetailTMap(requireActivity(), mapHandler)
 
         binding.layoutContainer.addView(tMap.tMapView)
     }
@@ -92,20 +108,20 @@ class RouteDetailFragment : Fragment(), RouteDetailHandler {
             binding.textViewDestination.text = it.name
         }
         routeResultViewModel.itinerary.observe(viewLifecycleOwner) {
-            binding.routeDetailDrawer.textViewTime.text = DrawerStringUtils.getTimeString(it.totalTime)
-            binding.routeDetailDrawer.textViewInformation.text = DrawerStringUtils.getTopInformationString(it)
+            binding.routeDetailDrawer.textViewTime.text =
+                DrawerStringUtils.getTimeString(it.totalTime)
+            binding.routeDetailDrawer.textViewInformation.text =
+                DrawerStringUtils.getTopInformationString(it)
         }
         routeResultViewModel.isLastTimeAvailable.observe(viewLifecycleOwner) {
-            binding.routeDetailDrawer.viewAlarm.visibility = if (it) View.VISIBLE else View.INVISIBLE
-            binding.routeDetailDrawer.viewAlarm2.visibility = if (it) View.INVISIBLE else View.VISIBLE
-            binding.routeDetailDrawer.constraintLayoutAlertCantDo.visibility = if (it) View.VISIBLE else View.INVISIBLE
-            binding.routeDetailDrawer.textViewAlarmTextCantSet.visibility = if (it) View.INVISIBLE else View.VISIBLE
-        }
-    }
-
-    override fun alertTMapReady() {
-        routeResultViewModel.itinerary.value?.let {
-            tMap.drawRoutes(it.routes)
+            binding.routeDetailDrawer.viewAlarm.visibility =
+                if (it) View.VISIBLE else View.INVISIBLE
+            binding.routeDetailDrawer.viewAlarm2.visibility =
+                if (it) View.INVISIBLE else View.VISIBLE
+            binding.routeDetailDrawer.constraintLayoutAlertCantDo.visibility =
+                if (it) View.VISIBLE else View.INVISIBLE
+            binding.routeDetailDrawer.textViewAlarmTextCantSet.visibility =
+                if (it) View.INVISIBLE else View.VISIBLE
         }
     }
 

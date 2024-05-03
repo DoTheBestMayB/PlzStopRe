@@ -39,7 +39,9 @@ fun Context.getAlarmDefaultNotification(
 
     createDefaultNotificationChannel(applicationContext, id, name)
 
-    return NotificationCompat.Builder(applicationContext, id).setContentTitle(title).setContentText(content).setSmallIcon(R.mipmap.ic_bus).setOngoing(true).setContentIntent(pendingIntent).build()
+    return NotificationCompat.Builder(applicationContext, id).setContentTitle(title)
+        .setContentText(content).setSmallIcon(R.mipmap.ic_bus).setOngoing(true)
+        .setContentIntent(pendingIntent).build()
 }
 
 fun Context.getAlarmHighNotification(
@@ -51,13 +53,17 @@ fun Context.getAlarmHighNotification(
 
     createHighNotificationChannel(applicationContext, id, name)
 
-    return NotificationCompat.Builder(applicationContext, id).setContentTitle(title).setContentText(content).setSmallIcon(R.mipmap.ic_bus).setAutoCancel(true)
-        .setPriority(NotificationCompat.PRIORITY_HIGH).setCategory(NotificationCompat.CATEGORY_ALARM).setContentIntent(pendingIntent).setFullScreenIntent(pendingIntent, true).build()
+    return NotificationCompat.Builder(applicationContext, id).setContentTitle(title)
+        .setContentText(content).setSmallIcon(R.mipmap.ic_bus).setAutoCancel(true)
+        .setPriority(NotificationCompat.PRIORITY_HIGH)
+        .setCategory(NotificationCompat.CATEGORY_ALARM).setContentIntent(pendingIntent)
+        .setFullScreenIntent(pendingIntent, true).build()
 }
 
 private fun createDefaultNotificationChannel(context: Context, id: String, name: String) {
     if (isMoreThanOreo()) {
-        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val importance = NotificationManager.IMPORTANCE_DEFAULT
 
         NotificationChannel(
@@ -70,7 +76,8 @@ private fun createDefaultNotificationChannel(context: Context, id: String, name:
 
 private fun createHighNotificationChannel(context: Context, id: String, name: String) {
     if (isMoreThanOreo()) {
-        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val importance = NotificationManager.IMPORTANCE_HIGH
 
         NotificationChannel(
@@ -83,7 +90,8 @@ private fun createHighNotificationChannel(context: Context, id: String, name: St
 
 fun Context.getScreenSize(): Size {
     return if (isMoreThanRedVelVet()) {
-        val metrics: WindowMetrics = getSystemService(WindowManager::class.java).currentWindowMetrics
+        val metrics: WindowMetrics =
+            getSystemService(WindowManager::class.java).currentWindowMetrics
         Size(metrics.bounds.width(), metrics.bounds.height())
     } else {
         val display = getSystemService(WindowManager::class.java).defaultDisplay

@@ -12,8 +12,12 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
-import com.google.android.gms.location.*
-import com.stop.*
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
+import com.stop.AlarmActivity
 import com.stop.R
 import com.stop.model.map.Location
 import com.stop.util.convertTimeMillisToString
@@ -126,7 +130,11 @@ class MissionService : LifecycleService() {
                 }
             }
         }
-        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
+        fusedLocationClient.requestLocationUpdates(
+            locationRequest,
+            locationCallback,
+            Looper.getMainLooper()
+        )
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -142,7 +150,8 @@ class MissionService : LifecycleService() {
         if (lastTimeString != null) {
             val lastTimeMillis = makeFullTime(lastTimeString).timeInMillis
             val nowTimeMillis = System.currentTimeMillis()
-            var diffTimeMillis = if (lastTimeMillis > nowTimeMillis) lastTimeMillis - nowTimeMillis else 0L
+            var diffTimeMillis =
+                if (lastTimeMillis > nowTimeMillis) lastTimeMillis - nowTimeMillis else 0L
 
             timer.cancel()
             timer = lifecycleScope.launch(Dispatchers.IO) {

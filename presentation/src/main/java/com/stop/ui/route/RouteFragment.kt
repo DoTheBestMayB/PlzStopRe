@@ -149,7 +149,12 @@ class RouteFragment : Fragment() {
             } else {
                 it.name
             }
-            binding.textViewDestination.setTextColor(ContextCompat.getColor(this.requireContext(), R.color.main_dark_grey))
+            binding.textViewDestination.setTextColor(
+                ContextCompat.getColor(
+                    this.requireContext(),
+                    R.color.main_dark_grey
+                )
+            )
         }
         routeViewModel.origin.observe(viewLifecycleOwner) {
             binding.textViewOrigin.text = if (it.name.isEmpty()) {
@@ -157,7 +162,12 @@ class RouteFragment : Fragment() {
             } else {
                 it.name
             }
-            binding.textViewOrigin.setTextColor(ContextCompat.getColor(this.requireContext(), R.color.main_dark_grey))
+            binding.textViewOrigin.setTextColor(
+                ContextCompat.getColor(
+                    this.requireContext(),
+                    R.color.main_dark_grey
+                )
+            )
         }
 //        routeViewModel.routeResponse.observe(viewLifecycleOwner) {
 //            if (it == null) {

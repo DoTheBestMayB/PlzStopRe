@@ -4,7 +4,6 @@ import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.core.widget.ImageViewCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -28,7 +27,10 @@ class RouteDetailAdapter(
         fun bind(routeItem: RouteItem) {
             binding.textViewName.text = routeItem.name
             binding.viewCurrentLine.setBackgroundColor(routeItem.currentColor)
-            ImageViewCompat.setImageTintList(binding.imageViewCurrentLine, ColorStateList.valueOf(routeItem.currentColor))
+            ImageViewCompat.setImageTintList(
+                binding.imageViewCurrentLine,
+                ColorStateList.valueOf(routeItem.currentColor)
+            )
         }
     }
 
@@ -37,12 +39,17 @@ class RouteDetailAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(routeItem: RouteItem) {
             binding.textViewName.text = routeItem.name
-            binding.textViewInformation.text = DrawerStringUtils.getRouteItemInformationString(routeItem)
-            binding.textViewLastTime1.visibility = if (routeItem.lastTime != null) View.VISIBLE else View.INVISIBLE
+            binding.textViewInformation.text =
+                DrawerStringUtils.getRouteItemInformationString(routeItem)
+            binding.textViewLastTime1.visibility =
+                if (routeItem.lastTime != null) View.VISIBLE else View.INVISIBLE
             binding.textViewLastTime2.text = routeItem.lastTime
             binding.viewBeforeLine.setBackgroundColor(routeItem.beforeColor)
             binding.viewCurrentLine.setBackgroundColor(routeItem.currentColor)
-            ImageViewCompat.setImageTintList(binding.imageViewCurrentLine, ColorStateList.valueOf(routeItem.currentColor))
+            ImageViewCompat.setImageTintList(
+                binding.imageViewCurrentLine,
+                ColorStateList.valueOf(routeItem.currentColor)
+            )
             binding.imageViewMode.setImageResource(routeItem.mode)
         }
     }
@@ -53,7 +60,10 @@ class RouteDetailAdapter(
         fun bind(routeItem: RouteItem) {
             binding.textViewName.text = routeItem.name
             binding.viewBeforeLine.setBackgroundColor(routeItem.beforeColor)
-            ImageViewCompat.setImageTintList(binding.imageViewCurrentLine, ColorStateList.valueOf(routeItem.currentColor))
+            ImageViewCompat.setImageTintList(
+                binding.imageViewCurrentLine,
+                ColorStateList.valueOf(routeItem.currentColor)
+            )
         }
     }
 
@@ -65,14 +75,17 @@ class RouteDetailAdapter(
                 binding = ItemRouteFirstBinding.inflate(inflater, parent, false)
                 FirstViewHolder(binding)
             }
+
             TYPE_PATH -> {
                 binding = ItemRoutePathBinding.inflate(inflater, parent, false)
                 PathViewHolder(binding)
             }
+
             TYPE_LAST -> {
                 binding = ItemRouteLastBinding.inflate(inflater, parent, false)
                 LastViewHolder(binding)
             }
+
             else -> throw IllegalArgumentException("Invalid ViewType")
         }
 

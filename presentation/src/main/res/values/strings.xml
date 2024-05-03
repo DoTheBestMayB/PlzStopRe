@@ -88,4 +88,9 @@
     <string name="minute_before">분 전</string>
     <string name="option_setting">옵션 설정</string>
     <string name="ongoing_mission">진행중인 미션이 있습니다</string>
+    <string name="location_permission_dialog_title">위치 권한 안내</string>
+    <string name="location_partial_permission_dialog_message">정확한 위치 탐색을 위해 정확한 위치 사용 권한이 필요합니다.</string>
+    <string name="deny">거부</string>
+    <string name="allow">허용</string>
+    <string name="location_permission_denied_dialog_message">위치 탐색을 위해 위치 사용 권한이 필요합니다.</string>
 </resources>

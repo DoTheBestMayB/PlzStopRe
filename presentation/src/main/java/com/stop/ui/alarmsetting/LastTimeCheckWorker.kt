@@ -10,12 +10,12 @@ import androidx.work.ForegroundInfo
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.stop.R
-import com.stop.util.AlarmFunctions
 import com.stop.domain.usecase.nearplace.GetNearPlacesUseCase
-import com.stop.util.isMoreThanOreo
-import com.stop.util.makeFullTime
 import com.stop.ui.alarmsetting.AlarmSettingFragment.Companion.ALARM_TIME
 import com.stop.ui.alarmsetting.AlarmSettingFragment.Companion.LAST_TIME
+import com.stop.util.AlarmFunctions
+import com.stop.util.isMoreThanOreo
+import com.stop.util.makeFullTime
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.delay
@@ -44,7 +44,7 @@ class LastTimeCheckWorker @AssistedInject constructor(
         return Result.success()
     }
 
-    private fun initData(){
+    private fun initData() {
         lastTime = inputData.getString(LAST_TIME) ?: ""
     }
 
@@ -83,7 +83,7 @@ class LastTimeCheckWorker @AssistedInject constructor(
 
     private suspend fun checkLastTransportTime() {
         while (isStopped.not()) {
-           //TODO 막차시간 가져오는 API로 변경 해야합니다.
+            //TODO 막차시간 가져오는 API로 변경 해야합니다.
             getNearPlacesUseCase(
                 "아남타워",
                 126.969652,
@@ -92,7 +92,7 @@ class LastTimeCheckWorker @AssistedInject constructor(
 
             val resultLastTime = "21:04:00"
 
-            if(lastTime != resultLastTime && resultLastTime != null){
+            if (lastTime != resultLastTime && resultLastTime != null) {
                 lastTime = resultLastTime
                 alarmFunctions.cancelAlarm()
                 alarmFunctions.callAlarm(resultLastTime, alarmTime)

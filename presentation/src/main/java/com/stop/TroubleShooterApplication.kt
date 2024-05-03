@@ -7,10 +7,10 @@ import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 
 @HiltAndroidApp
-class TroubleShooterApplication : Application(), Configuration.Provider{
+class TroubleShooterApplication : Application(), Configuration.Provider {
 
     @Inject
-    lateinit var workerFactory : HiltWorkerFactory
+    lateinit var workerFactory: HiltWorkerFactory
 
     @Inject
     override lateinit var workManagerConfiguration: Configuration

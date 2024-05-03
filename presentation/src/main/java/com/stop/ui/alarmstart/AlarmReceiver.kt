@@ -6,17 +6,18 @@ import android.content.Context
 import android.content.Intent
 import com.stop.AlarmActivity
 import com.stop.R
-import com.stop.util.isMoreThanOreo
 import com.stop.ui.alarmsetting.AlarmSettingFragment.Companion.ALARM_CODE
 import com.stop.ui.alarmsetting.AlarmSettingFragment.Companion.ALARM_NOTIFICATION_HIGH_ID
 import com.stop.ui.alarmsetting.AlarmSettingFragment.Companion.ALARM_NOTIFICATION_ID
 import com.stop.util.getActivityPendingIntent
 import com.stop.util.getAlarmHighNotification
+import com.stop.util.isMoreThanOreo
 
 class AlarmReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
-        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.cancel(ALARM_NOTIFICATION_ID)
 
         val content = context.getString(R.string.alarm_content_text)
@@ -28,7 +29,8 @@ class AlarmReceiver : BroadcastReceiver() {
             val alarmStartPendingIntent = context.getActivityPendingIntent(
                 Intent(context, AlarmActivity::class.java).apply {
                     putExtra("ALARM_CODE", ALARM_CODE)
-                    flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    flags =
+                        Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
                 },
                 ALARM_CODE
             )
@@ -44,7 +46,8 @@ class AlarmReceiver : BroadcastReceiver() {
 
             Intent(context, AlarmActivity::class.java).apply {
                 putExtra("ALARM_CODE", ALARM_CODE)
-                flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                flags =
+                    Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
                 context.startActivity(this)
             }
         }

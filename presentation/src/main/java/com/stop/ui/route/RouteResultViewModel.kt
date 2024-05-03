@@ -10,7 +10,11 @@ import com.stop.domain.model.route.tmap.custom.Itinerary
 import com.stop.domain.model.route.tmap.custom.MoveType
 import com.stop.domain.model.route.tmap.custom.Route
 import com.stop.domain.model.route.tmap.custom.TransportRoute
-import com.stop.model.route.*
+import com.stop.model.route.Place
+import com.stop.model.route.RouteItem
+import com.stop.model.route.RouteItemType
+import com.stop.model.route.toFirstRouteItem
+import com.stop.model.route.toLastRouteItem
 
 class RouteResultViewModel : ViewModel() {
 
