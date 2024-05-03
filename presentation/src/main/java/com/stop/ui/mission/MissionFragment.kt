@@ -325,20 +325,27 @@ class MissionFragment : Fragment(), MissionHandler {
         lateinit var beforeLocation: Location
         viewLifecycleOwner.lifecycleScope.launch {
             missionViewModel.userLocations.collectIndexed { index, userLocation ->
-                if (index == 1) {
+                if (userLocation.isEmpty()) {
+                    return@collectIndexed
+                }
+                val location = userLocation.last()
+                if (index == 0) {
                     initMarker(userLocation)
-                    beforeLocation = userLocation.last()
-                } else if (index > 1) {
+                    beforeLocation = location
+                } else if (index >= 1 && userLocation.isNotEmpty()) {
                     drawNowLocationLine(
-                        TMapPoint(userLocation.last().latitude, userLocation.last().longitude),
+                        TMapPoint(location.latitude, location.longitude),
                         TMapPoint(beforeLocation.latitude, beforeLocation.longitude)
                     )
-                    personCurrentLocation = userLocation.last()
+                    personCurrentLocation = location
                     if (tMap.isTracking) {
-                        tMap.tMapView.setCenterPoint(userLocation.last().latitude, userLocation.last().longitude)
+                        tMap.tMapView.setCenterPoint(
+                            location.latitude,
+                            location.longitude
+                        )
                     }
-                    beforeLocation = userLocation.last()
-                    arriveDestination(userLocation.last().latitude, userLocation.last().longitude)
+                    beforeLocation = location
+                    arriveDestination(location.latitude, location.longitude)
                 }
             }
         }
