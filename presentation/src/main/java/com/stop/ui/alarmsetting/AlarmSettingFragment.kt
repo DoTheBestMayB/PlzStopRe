@@ -45,10 +45,13 @@ class AlarmSettingFragment : Fragment() {
     private fun initView() {
         binding.textViewStartPosition.text = routeResultViewModel.origin.value?.name
         binding.textViewEndPosition.text = routeResultViewModel.destination.value?.name
-        binding.textViewLastTimeInfo.text = routeResultViewModel.lastTimes.value?.filterNotNull()?.sortedBy {
-            it.timeToBoard
-        }?.first()?.timeToBoard
-        val expectedWalkingTime = (routeResultViewModel.itinerary.value!!.routes.first().sectionTime.div(60)).roundToInt().toString() + "분"
+        binding.textViewLastTimeInfo.text =
+            routeResultViewModel.lastTimes.value?.filterNotNull()?.sortedBy {
+                it.timeToBoard
+            }?.first()?.timeToBoard
+        val expectedWalkingTime =
+            (routeResultViewModel.itinerary.value!!.routes.first().sectionTime.div(60)).roundToInt()
+                .toString() + "분"
         binding.textViewWalkTimeInfo.text = expectedWalkingTime
 
         with(binding) {

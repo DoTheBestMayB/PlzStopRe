@@ -75,7 +75,7 @@ class RouteViewModel @Inject constructor(
             is SocketTimeoutException -> Event(ErrorType.SOCKET_TIMEOUT_EXCEPTION)
             is UnknownHostException -> Event(ErrorType.UNKNOWN_HOST_EXCEPTION)
             else -> Event(ErrorType.UNKNOWN_EXCEPTION)
-         }
+        }
         _errorMessage.postValue(errorMessage)
         _isLoading.postValue(Event(false))
     }

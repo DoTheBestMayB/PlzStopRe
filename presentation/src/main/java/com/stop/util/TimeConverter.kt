@@ -2,7 +2,9 @@ package com.stop.util
 
 import java.text.ParseException
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 fun makeFullTime(time: String): Calendar {
     val currentTime = System.currentTimeMillis()

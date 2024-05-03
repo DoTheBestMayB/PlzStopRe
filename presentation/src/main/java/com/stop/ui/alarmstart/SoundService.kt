@@ -5,15 +5,19 @@ import android.content.Context
 import android.content.Intent
 import android.media.MediaPlayer
 import android.media.RingtoneManager
-import android.os.*
+import android.os.CombinedVibration
+import android.os.PowerManager
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
 import com.stop.domain.usecase.alarm.GetAlarmUseCase
+import com.stop.ui.alarmsetting.AlarmSettingFragment.Companion.ALARM_CODE
+import com.stop.util.getBroadcastPendingIntent
 import com.stop.util.isMoreThanOreoUnderRedVelVet
 import com.stop.util.isMoreThanSnow
 import com.stop.util.isUnderOreo
-import com.stop.ui.alarmsetting.AlarmSettingFragment.Companion.ALARM_CODE
-import com.stop.util.getBroadcastPendingIntent
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -37,7 +41,10 @@ class SoundService : LifecycleService() {
             getAlarmUseCase().collectLatest { alarmData ->
                 alarmData?.let {
                     if (it.alarmMethod) {
-                        mediaPlayer = MediaPlayer.create(this@SoundService, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)).apply {
+                        mediaPlayer = MediaPlayer.create(
+                            this@SoundService,
+                            RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+                        ).apply {
                             setWakeMode(this@SoundService, PowerManager.PARTIAL_WAKE_LOCK)
                             isLooping = true
                             start()
@@ -55,7 +62,8 @@ class SoundService : LifecycleService() {
                         val effect = VibrationEffect.createWaveform(pattern, amplitude, 0)
                         vibrator?.vibrate(effect)
                     } else if (isMoreThanSnow()) {
-                        vibratorManager = getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+                        vibratorManager =
+                            getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
                         val effect = VibrationEffect.createWaveform(pattern, amplitude, 0)
                         val combinedVibration = CombinedVibration.createParallel(effect)
                         vibratorManager?.vibrate(combinedVibration)

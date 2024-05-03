@@ -11,7 +11,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -58,11 +57,9 @@ class MissionFragment : Fragment() {
 
     private val mapHandler = object : TMapHandler {
         override fun alertTMapReady() {
-//            permissionManager.getLocationPermission(
-//                onGranted = ,
-//                isOkayPartialGranted = true,
-//                isShowDialog = true,
-//            )
+            requestLocationPermission(false) {
+                tMap.isTracking = true
+            }
             getAlarmInfo()
             alarmSettingViewModel.alarmStatus.value = AlarmStatus.MISSION
             drawPersonLine()
@@ -332,14 +329,6 @@ class MissionFragment : Fragment() {
             tMapView.setOnEnableScrollWithZoomLevelListener { _, _ ->
                 isTracking = false
             }
-        }
-    }
-
-    private val requestPermissionsLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        if (permissions.entries.any { it.value }) {
-            tMap.isTracking = false
         }
     }
 

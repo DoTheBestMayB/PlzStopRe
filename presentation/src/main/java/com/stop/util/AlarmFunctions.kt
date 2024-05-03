@@ -16,7 +16,8 @@ class AlarmFunctions(
 ) {
 
     fun callAlarm(lastTime: String, alarmTime: Int) {
-        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         val alarmSettingPendingIntent = context.getActivityPendingIntent(
             Intent(context, MainActivity::class.java).apply {
@@ -25,7 +26,8 @@ class AlarmFunctions(
             ALARM_MAP_CODE
         )
 
-        val content = context.getString(R.string.alarm_last_notification_text, lastTime, alarmTime.toString())
+        val content =
+            context.getString(R.string.alarm_last_notification_text, lastTime, alarmTime.toString())
         val alarmSettingNotification = context.getAlarmDefaultNotification(
             alarmSettingPendingIntent,
             content
@@ -54,7 +56,8 @@ class AlarmFunctions(
 
         alarmManager.cancel(alarmReceiverPendingIntent)
 
-        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.cancel(ALARM_NOTIFICATION_ID)
     }
 
